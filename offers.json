@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-29T16:24:56.261Z",
+  "offers": [
+    {
+      "offer_id": "epic:8401414902e84f2cb9afa9142f051d32:20260827T1500",
+      "title": "《Breathedge》",
+      "platform": "epic",
+      "platform_label": "Epic Games Store",
+      "regions": [
+        "CN"
+      ],
+      "official_url": "https://store.epicgames.com/zh-CN/p/breathedge",
+      "source_url": "https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=zh-CN&country=CN&allowCountries=CN",
+      "offer_type": "keep",
+      "ownership": "permanent",
+      "membership_required": false,
+      "starts_at": "2026-08-27T15:00:00.000Z",
+      "ends_at": "2026-09-03T15:00:00.000Z",
+      "timezone": "Asia/Shanghai",
+      "original_price": {
+        "amount": 92,
+        "currency": "CNY",
+        "display": "CNY 92"
+      },
+      "current_price": {
+        "amount": 0,
+        "currency": "CNY",
+        "display": "免费"
+      },
+      "verified_at": "2026-08-29T16:20:24.069Z",
+      "reminder_level": "deadline_alert",
+      "image_url": "https://cdn1.epicgames.com/08ae29e4f70a4b62aa055e383381aa82/offer/egs-breathedge-redruinssoftworks-s1-2560x1440-76fd08cd9c2d-2560x1440-783424f6d4a7f32a0e75fc074f2f928e.jpg"
+    },
+    {
+      "offer_id": "epic:8f1fcf01e32e4fd4b2ae0a9737992760:20260827T1500",
+      "title": "Rival Stars Horse Racing : Desktop Edition",
+      "platform": "epic",
+      "platform_label": "Epic Games Store",
+      "regions": [
+        "CN"
+      ],
+      "official_url": "https://store.epicgames.com/zh-CN/p/rival-stars-horse-racing-dd09de",
+      "source_url": "https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=zh-CN&country=CN&allowCountries=CN",
+      "offer_type": "keep",
+      "ownership": "permanent",
+      "membership_required": false,
+      "starts_at": "2026-08-27T15:00:00.000Z",
+      "ends_at": "2026-09-03T15:00:00.000Z",
+      "timezone": "Asia/Shanghai",
+      "original_price": {
+        "amount": 78,
+        "currency": "CNY",
+        "display": "CNY 78"
+      },
+      "current_price": {
+        "amount": 0,
+        "currency": "CNY",
+        "display": "免费"
+      },
+      "verified_at": "2026-08-29T16:20:24.069Z",
+      "reminder_level": "deadline_alert",
+      "image_url": "https://cdn1.epicgames.com/spt-assets/3355791f5b4740618adac242cf0dd46c/rival-stars-horse-racing-scu1x.jpg"
+    }
+  ]
+}

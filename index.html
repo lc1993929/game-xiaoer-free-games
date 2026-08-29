@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#173B3A">
+  <title>游戏小二·限免雷达</title>
+  <meta name="description" content="只收录已经从官方页面核验的免费游戏活动，按到期时间排序。">
+  <meta property="og:title" content="游戏小二·限免雷达">
+  <meta property="og:description" content="永久入库、会员可领、限时畅玩和新试玩，一页看清。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://lc1993929.github.io/game-xiaoer-free-games/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://lc1993929.github.io/game-xiaoer-free-games/og.png">
+  <link rel="icon" href="./icon.png" type="image/png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand-mark" aria-hidden="true">小二</div>
+    <div>
+      <p class="eyebrow">游戏小二</p>
+      <h1>限免雷达</h1>
+      <p class="lede">只放已经核验的官方领取入口。你点进商店后，再登录自己的平台账号确认领取。</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="summary" aria-labelledby="summary-title">
+      <div>
+        <p class="eyebrow">当前可处理</p>
+        <h2 id="summary-title"><span id="active-count">0</span> 项活动</h2>
+      </div>
+      <p id="next-deadline" class="deadline">正在核验今天的活动</p>
+    </section>
+
+    <nav class="filters" aria-label="活动筛选">
+      <button class="filter is-active" type="button" data-filter="all" aria-pressed="true">全部</button>
+      <button class="filter" type="button" data-filter="keep" aria-pressed="false">永久入库</button>
+      <button class="filter" type="button" data-filter="subscription" aria-pressed="false">会员可领</button>
+      <button class="filter" type="button" data-filter="free_weekend" aria-pressed="false">限时畅玩</button>
+      <button class="filter" type="button" data-filter="trial" aria-pressed="false">试玩与常驻免费</button>
+    </nav>
+
+    <label class="platform-picker" for="platform-filter">
+      <span>平台</span>
+      <select id="platform-filter">
+        <option value="all">全部平台</option>
+      </select>
+    </label>
+
+    <div id="offer-list" class="offer-list" aria-live="polite"></div>
+
+    <section id="empty-state" class="empty-state">
+      <p class="empty-kicker">雷达运行中</p>
+      <h2>今天还没有可公开的活动</h2>
+      <p>候选活动会先核对价格、结束时间、区服和领取后的所有权。没核清的内容不会出现在这里。</p>
+    </section>
+
+    <section class="ownership-guide" aria-labelledby="ownership-title">
+      <p class="eyebrow">先看清再领取</p>
+      <h2 id="ownership-title">四种“免费”不是一回事</h2>
+      <dl>
+        <div><dt>永久拥有</dt><dd>在活动期内完成领取，之后仍能游玩。</dd></div>
+        <div><dt>订阅有效期内可玩</dt><dd>需要对应会员，订阅结束后通常无法继续游玩。</dd></div>
+        <div><dt>活动期可玩</dt><dd>免费周末结束后会失去游玩权限。</dd></div>
+        <div><dt>无需领取</dt><dd>Demo 或常驻免费游戏，可以直接进入官方商店。</dd></div>
+      </dl>
+    </section>
+  </main>
+
+  <footer>
+    <p>数据来自官方商店、官方新闻和官方活动页。页面不保存账号、密码、Cookie 或令牌，也不会替你领取。</p>
+    <p id="updated-at">等待首次核验</p>
+  </footer>
+
+  <template id="offer-template">
+    <article class="offer-card">
+      <div class="offer-meta">
+        <span class="platform"></span>
+        <span class="region"></span>
+        <span class="type"></span>
+      </div>
+      <h2 class="title"></h2>
+      <p class="ownership"></p>
+      <p class="membership"></p>
+      <div class="offer-action">
+        <div>
+          <span class="date-label">结束时间</span>
+          <strong class="ends-at"></strong>
+          <span class="countdown" aria-live="off"></span>
+        </div>
+        <a class="claim-link" rel="noopener noreferrer" target="_blank">前往官方页面</a>
+      </div>
+    </article>
+  </template>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
