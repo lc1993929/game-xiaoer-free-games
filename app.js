@@ -255,6 +255,7 @@ function renderVerificationHub() {
   document.querySelector("#verification-send-code").textContent = emailFlow === "otp" ? "发送验证码" : "发送登录链接";
   if (emailFlow === "magic_link") document.querySelector("#verification-code-row").hidden = true;
   document.querySelector("#verification-account").hidden = !session;
+  document.querySelector("#verification-session-test").hidden = !(loginTest && session);
   document.querySelector("#verification-actions").hidden = !session || loginTest;
   document.querySelector("#verification-account-state").textContent = session
     ? "已登录"
@@ -375,6 +376,13 @@ function bindVerification() {
       await state.verificationClient.logout();
       setVerificationMessage("已退出登录。", "success");
       await refreshVerificationAccount();
+    });
+  });
+
+  document.querySelector("#verification-check-session").addEventListener("click", async () => {
+    await withVerificationBusy(async () => {
+      await state.verificationClient.checkBackendSession();
+      setVerificationMessage("后端会话鉴权通过。游戏平台关联和游戏库核验仍未开放。", "success");
     });
   });
 
