@@ -21,7 +21,7 @@
     <div>
       <p class="eyebrow">游戏小二</p>
       <h1>限免雷达</h1>
-      <p class="lede">只放已经核验的官方领取入口。你点进商店后，再登录自己的平台账号确认领取。</p>
+      <p class="lede">只放已经核验的官方领取入口。可以逐项浏览，也可以用批量确认助手一次处理今天的清单。</p>
     </div>
   </header>
 
@@ -32,6 +32,71 @@
         <h2 id="summary-title"><span id="active-count">0</span> 项活动</h2>
       </div>
       <p id="next-deadline" class="deadline">正在核验今天的活动</p>
+    </section>
+
+    <section class="batch-assistant" aria-labelledby="batch-assistant-title">
+      <div class="batch-intro">
+        <div>
+          <p class="eyebrow">本机批量清单</p>
+          <h2 id="batch-assistant-title">批量确认助手</h2>
+        </div>
+        <p>助手只负责排序和记录。每一项都要由你在官方页面亲手确认，页面不会操作账号，也不能验证是否真正入库。</p>
+      </div>
+      <div class="batch-counts" aria-label="本机处理进度">
+        <div><strong id="batch-pending-count">0</strong><span>待处理</span></div>
+        <div><strong id="batch-confirmed-count">0</strong><span>已确认</span></div>
+        <div><strong id="batch-skipped-count">0</strong><span>已跳过</span></div>
+      </div>
+      <button id="batch-start" class="primary-button" type="button">开始处理 <span id="batch-total-count">0</span> 项</button>
+      <p id="storage-warning" class="storage-warning" role="status" hidden></p>
+      <details class="membership-settings">
+        <summary>会员设置与本机记录</summary>
+        <p id="membership-hidden" class="settings-note">会员设置只保存在当前浏览器。</p>
+        <div class="membership-grid">
+          <label><input type="checkbox" data-membership-platform="prime_gaming"> 我有 Prime Gaming</label>
+          <label><input type="checkbox" data-membership-platform="ps_plus_hk"> 我有 PlayStation Plus 港区</label>
+          <label><input type="checkbox" data-membership-platform="xbox_free_play_days_hk"> 我有 Xbox 会员港区</label>
+          <label><input type="checkbox" data-membership-platform="nintendo_switch_online_hk"> 我有 Nintendo Switch Online 港区</label>
+        </div>
+        <div class="record-actions">
+          <button id="batch-reset" class="text-button" type="button">重新处理当前清单</button>
+          <button id="batch-clear" class="text-button danger" type="button">清除本机记录</button>
+        </div>
+      </details>
+    </section>
+
+    <section id="batch-workflow" class="batch-workflow" aria-labelledby="batch-workflow-title" hidden>
+      <div class="workflow-header">
+        <div>
+          <p id="batch-position" class="eyebrow">准备清单</p>
+          <h2 id="batch-workflow-title">逐项确认</h2>
+        </div>
+        <button id="batch-close" class="close-button" type="button" aria-label="关闭批量确认助手">关闭</button>
+      </div>
+      <div id="batch-active">
+        <div class="batch-meta">
+          <span id="batch-platform"></span>
+          <span id="batch-region"></span>
+        </div>
+        <h3 id="batch-title-current"></h3>
+        <dl class="batch-details">
+          <div><dt>所有权</dt><dd id="batch-ownership"></dd></div>
+          <div><dt>会员</dt><dd id="batch-membership"></dd></div>
+          <div><dt>结束时间</dt><dd id="batch-deadline"></dd></div>
+        </dl>
+        <a id="batch-open-link" class="batch-open-link" rel="noopener noreferrer" target="_blank">打开官方页面</a>
+        <p id="batch-confirm-hint" class="confirm-hint">先打开官方页面，返回后才能记录为已确认。</p>
+        <div class="workflow-actions">
+          <button id="batch-confirm" class="confirm-button" type="button" disabled>我已在官方页面确认</button>
+          <button id="batch-skip" class="skip-button" type="button">暂时跳过</button>
+        </div>
+      </div>
+      <div id="batch-complete" class="batch-complete" hidden>
+        <p class="complete-mark" aria-hidden="true">✓</p>
+        <h3>这次清单处理完了</h3>
+        <p>本机记录：已确认 <strong id="complete-confirmed">0</strong> 项，已跳过 <strong id="complete-skipped">0</strong> 项。</p>
+        <p>实际入库结果请到对应平台游戏库查看。</p>
+      </div>
     </section>
 
     <nav class="filters" aria-label="活动筛选">
@@ -70,7 +135,8 @@
   </main>
 
   <footer>
-    <p>数据来自官方商店、官方新闻和官方活动页。页面不保存账号、密码、Cookie 或令牌，也不会替你领取。</p>
+    <p>数据来自官方商店、官方新闻和官方活动页。页面不保存账号、密码、Cookie 或令牌，不模拟点击，也不会替你领取。</p>
+    <p>批量确认进度和会员设置只保存在当前浏览器，不会跨设备同步。</p>
     <p id="updated-at">等待首次核验</p>
   </footer>
 
@@ -84,6 +150,7 @@
       <h2 class="title"></h2>
       <p class="ownership"></p>
       <p class="membership"></p>
+      <p class="local-progress" hidden></p>
       <div class="offer-action">
         <div>
           <span class="date-label">结束时间</span>
@@ -95,6 +162,6 @@
     </article>
   </template>
 
-  <script src="./app.js" defer></script>
+  <script src="./app.js" type="module"></script>
 </body>
 </html>

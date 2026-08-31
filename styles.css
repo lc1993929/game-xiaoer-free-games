@@ -88,6 +88,68 @@ h1 {
 .summary h2 span { color: var(--orange); font-size: 38px; }
 .deadline { margin: 0; color: var(--muted); font-size: 13px; text-align: right; }
 
+.batch-assistant, .batch-workflow {
+  margin-top: 16px;
+  border: 1px solid var(--rule);
+  border-radius: 22px;
+  background: var(--white);
+}
+.batch-assistant { padding: 22px; }
+.batch-intro { display: grid; grid-template-columns: minmax(180px, .8fr) minmax(0, 1.2fr); gap: 22px; align-items: start; }
+.batch-intro h2, .workflow-header h2 { margin: 0; color: var(--teal); font-size: 22px; line-height: 1.25; }
+.batch-intro > p { margin: 0; color: var(--muted); font-size: 13px; }
+.batch-counts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 18px 0 14px; }
+.batch-counts div { padding: 12px 10px; border-radius: 14px; background: var(--soft); text-align: center; }
+.batch-counts strong { display: block; color: var(--teal); font-size: 23px; line-height: 1.1; }
+.batch-counts span { color: var(--muted); font-size: 11px; }
+
+.primary-button, .confirm-button, .skip-button, .close-button, .text-button {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+.primary-button {
+  width: 100%;
+  border-radius: 14px;
+  padding: 12px 16px;
+  background: var(--teal);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 800;
+}
+.storage-warning { margin: 12px 0 0; border-radius: 12px; padding: 10px 12px; background: #fff4e7; color: #68431b; font-size: 12px; }
+.membership-settings { margin-top: 14px; border-top: 1px solid var(--rule); padding-top: 12px; }
+.membership-settings summary { color: var(--teal); font-size: 13px; font-weight: 800; cursor: pointer; }
+.settings-note { margin: 10px 0; color: var(--muted); font-size: 12px; }
+.membership-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; }
+.membership-grid label { display: flex; gap: 8px; align-items: flex-start; color: var(--ink); font-size: 12px; }
+.membership-grid input { flex: 0 0 auto; margin-top: 5px; accent-color: var(--teal); }
+.record-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.text-button { padding: 7px 0; background: transparent; color: var(--green); font-size: 12px; font-weight: 800; }
+.text-button.danger { color: #9a463f; }
+
+.batch-workflow { padding: 22px; scroll-margin-top: 12px; box-shadow: 0 16px 40px rgba(23,59,58,.08); }
+.workflow-header { display: flex; justify-content: space-between; gap: 16px; align-items: start; padding-bottom: 14px; border-bottom: 1px solid var(--rule); }
+.close-button { border-radius: 999px; padding: 7px 11px; background: var(--soft); color: var(--teal); font-size: 12px; }
+.batch-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; color: var(--muted); font-size: 12px; }
+.batch-meta span:first-child { color: var(--orange); font-weight: 800; }
+#batch-title-current { margin: 8px 0 14px; color: var(--teal); font-size: 24px; line-height: 1.35; overflow-wrap: anywhere; }
+.batch-details { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 18px; }
+.batch-details div { border-radius: 12px; padding: 10px; background: var(--soft); }
+.batch-details dt { color: var(--muted); font-size: 10px; }
+.batch-details dd { margin: 2px 0 0; color: var(--teal); font-size: 12px; font-weight: 800; overflow-wrap: anywhere; }
+.batch-open-link { display: block; border-radius: 14px; padding: 12px 16px; background: var(--orange); color: #34210c; font-size: 14px; font-weight: 800; text-align: center; text-decoration: none; }
+.confirm-hint { margin: 10px 0; color: var(--muted); font-size: 12px; }
+.workflow-actions { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
+.confirm-button, .skip-button { border-radius: 12px; padding: 11px 14px; font-size: 13px; font-weight: 800; }
+.confirm-button { background: var(--teal); color: var(--white); }
+.confirm-button:disabled { background: #c8d0cd; color: #687572; cursor: not-allowed; }
+.skip-button { border: 1px solid var(--rule); background: var(--white); color: var(--teal); }
+.batch-complete { padding: 26px 0 4px; text-align: center; }
+.batch-complete .complete-mark { display: grid; place-items: center; width: 50px; height: 50px; margin: 0 auto 12px; border-radius: 50%; background: var(--soft); color: var(--green); font-size: 25px; font-weight: 800; }
+.batch-complete h3 { margin: 0; color: var(--teal); font-size: 21px; }
+.batch-complete p { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+
 .filters {
   display: flex;
   gap: 8px;
@@ -109,7 +171,10 @@ h1 {
   cursor: pointer;
 }
 .filter.is-active { border-color: var(--teal); background: var(--teal); color: var(--white); }
-.filter:focus-visible, .claim-link:focus-visible, .platform-picker select:focus-visible { outline: 3px solid rgba(242,140,40,.45); outline-offset: 2px; }
+.filter:focus-visible, .claim-link:focus-visible, .platform-picker select:focus-visible,
+.primary-button:focus-visible, .batch-open-link:focus-visible, .confirm-button:focus-visible,
+.skip-button:focus-visible, .close-button:focus-visible, .text-button:focus-visible,
+.membership-settings summary:focus-visible, .membership-grid input:focus-visible { outline: 3px solid rgba(242,140,40,.45); outline-offset: 2px; }
 
 .platform-picker {
   display: flex;
@@ -155,6 +220,7 @@ h1 {
 .offer-card .title { margin: 8px 0 8px; color: var(--teal); font-size: 21px; line-height: 1.35; }
 .offer-card .ownership, .offer-card .membership { margin: 0; font-size: 14px; }
 .offer-card .membership { color: var(--muted); }
+.offer-card .local-progress { display: inline-block; margin: 10px 0 0; border-radius: 999px; padding: 3px 8px; background: var(--soft); color: var(--green); font-size: 11px; font-weight: 800; }
 
 .offer-action {
   display: flex;
@@ -202,6 +268,12 @@ footer p { margin: 0 0 8px; }
   .brand-mark { width: 48px; border-radius: 15px; font-size: 15px; }
   .summary { display: block; padding: 18px; }
   .deadline { margin-top: 8px; text-align: left; }
+  .batch-assistant, .batch-workflow { padding: 18px; border-radius: 18px; }
+  .batch-intro { display: block; }
+  .batch-intro > p { margin-top: 10px; }
+  .membership-grid { grid-template-columns: 1fr; }
+  .batch-details { grid-template-columns: 1fr; }
+  .workflow-actions { grid-template-columns: 1fr; }
   .offer-action { align-items: stretch; flex-direction: column; }
   .claim-link { text-align: center; }
 }
