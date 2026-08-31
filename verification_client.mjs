@@ -67,6 +67,7 @@ class DisabledVerificationClient {
   getSession() { return null; }
   async requestCode() { throw new Error(this.config.reason || "领取状态后端尚未启用"); }
   async verifyCode() { throw new Error(this.config.reason || "领取状态后端尚未启用"); }
+  async checkBackendSession() { throw new Error(this.config.reason || "领取状态后端尚未启用"); }
   async logout() {}
   async listLinks() { return []; }
   async listResults() { return []; }
@@ -100,6 +101,11 @@ class DemoVerificationClient {
     this.session = { email, access: "demo-session", refresh: "", expires_at: Date.now() + 3600000 };
     writeStoredSession(this.storage, this.session);
     return this.session;
+  }
+
+  async checkBackendSession() {
+    if (!this.session) throw new Error("请先用邮箱登录");
+    return { authenticated: true };
   }
 
   async logout() {
@@ -195,6 +201,18 @@ class SupabaseVerificationClient {
     this.session = sessionFromPayload(payload, email);
     writeStoredSession(this.storage, this.session);
     return this.session;
+  }
+
+  async checkBackendSession() {
+    await this.ensureSession();
+    const base = `${this.config.supabase_url}/functions/v1/${this.config.function_name}`;
+    await requestJson(`${base}/links`, {
+      headers: {
+        apikey: this.config.supabase_anon_key,
+        Authorization: `Bearer ${this.session.access}`,
+      },
+    });
+    return { authenticated: true };
   }
 
   async logout() {
