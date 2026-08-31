@@ -34,6 +34,67 @@
       <p id="next-deadline" class="deadline">正在核验今天的活动</p>
     </section>
 
+    <section class="verification-hub" aria-labelledby="verification-title">
+      <div class="verification-heading">
+        <div>
+          <p class="eyebrow">只核对限免清单</p>
+          <h2 id="verification-title">我的领取状态</h2>
+        </div>
+        <span id="verification-account-state" class="account-state">未登录</span>
+      </div>
+      <p class="verification-lede">关联游戏平台后，可以检查当前及最近 90 天的限免。只有官方游戏库返回的结果才会标为“确认在库”；奖杯、成就或游玩记录只会标为“推定已拥有”。</p>
+
+      <div id="verification-disabled" class="verification-notice" role="status" hidden>
+        <strong>领取状态核验尚未开放</strong>
+        <span id="verification-disabled-reason">账号后端完成配置前，继续使用下方批量确认助手。</span>
+      </div>
+
+      <form id="verification-login" class="verification-login" novalidate hidden>
+        <label for="verification-email">邮箱</label>
+        <div class="verification-form-row">
+          <input id="verification-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required>
+          <button id="verification-send-code" class="secondary-button" type="button">发送登录链接</button>
+        </div>
+        <div id="verification-code-row" class="verification-form-row" hidden>
+          <input id="verification-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="邮件验证码">
+          <button id="verification-sign-in" class="primary-inline-button" type="submit">登录</button>
+        </div>
+      </form>
+
+      <div id="verification-account" class="verification-account" hidden>
+        <div>
+          <span>当前账号</span>
+          <strong id="verification-account-email"></strong>
+        </div>
+        <button id="verification-sign-out" class="text-button" type="button">退出登录</button>
+      </div>
+
+      <p id="verification-message" class="verification-message" role="status" aria-live="polite"></p>
+
+      <div id="verification-results-summary" class="verification-results-summary" hidden>
+        <div><strong id="verification-confirmed-count">0</strong><span>确认在库</span></div>
+        <div><strong id="verification-likely-count">0</strong><span>推定拥有</span></div>
+        <div><strong id="verification-undetected-count">0</strong><span>未检测到</span></div>
+      </div>
+
+      <div id="verification-platforms" class="verification-platforms" aria-label="游戏平台关联状态"></div>
+
+      <div id="verification-actions" class="verification-actions" hidden>
+        <button id="verification-run" class="primary-button" type="button">立即核验限免清单</button>
+        <button id="verification-clear" class="text-button" type="button">清除核验结果</button>
+        <button id="verification-delete-account" class="text-button danger" type="button">删除领取状态账号</button>
+      </div>
+
+      <details class="verification-explanation">
+        <summary>结果怎么判断？</summary>
+        <dl>
+          <div><dt>确认在库</dt><dd>官方游戏库或权益接口明确返回当前账号拥有该商品。</dd></div>
+          <div><dt>推定已拥有</dt><dd>发现奖杯、成就或游玩记录；可能来自订阅、试玩、共享或历史访问。</dd></div>
+          <div><dt>未检测到</dt><dd>本次没有发现匹配记录，不代表一定没有领取。</dd></div>
+        </dl>
+      </details>
+    </section>
+
     <section class="batch-assistant" aria-labelledby="batch-assistant-title">
       <div class="batch-intro">
         <div>
@@ -135,7 +196,8 @@
   </main>
 
   <footer>
-    <p>数据来自官方商店、官方新闻和官方活动页。页面不保存账号、密码、Cookie 或令牌，不模拟点击，也不会替你领取。</p>
+    <p>数据来自官方商店、官方新闻和官方活动页。页面不保存游戏平台密码或 Cookie，不模拟点击，也不会替你领取。</p>
+    <p>领取状态功能只保存与限免活动匹配的结果，不保存完整游戏库；平台授权可随时解绑并删除。</p>
     <p>批量确认进度和会员设置只保存在当前浏览器，不会跨设备同步。</p>
     <p id="updated-at">等待首次核验</p>
   </footer>
@@ -151,6 +213,12 @@
       <p class="ownership"></p>
       <p class="membership"></p>
       <p class="local-progress" hidden></p>
+      <div class="offer-verification" hidden>
+        <span class="verification-badge"></span>
+        <p class="verification-detail"></p>
+        <time class="verification-time"></time>
+        <button class="verification-refresh" type="button">重新核验</button>
+      </div>
       <div class="offer-action">
         <div>
           <span class="date-label">结束时间</span>
@@ -162,6 +230,21 @@
     </article>
   </template>
 
+  <template id="verification-platform-template">
+    <article class="verification-platform-card">
+      <div>
+        <h3 class="verification-platform-name"></h3>
+        <p class="verification-platform-description"></p>
+      </div>
+      <div class="verification-platform-footer">
+        <span class="verification-platform-status"></span>
+        <button class="verification-platform-button" type="button"></button>
+        <a class="verification-library-link" target="_blank" rel="noopener noreferrer" hidden>打开平台查看</a>
+      </div>
+    </article>
+  </template>
+
+  <script src="./verification-config.js"></script>
   <script src="./app.js" type="module"></script>
 </body>
 </html>
