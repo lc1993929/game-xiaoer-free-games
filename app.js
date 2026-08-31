@@ -9,6 +9,18 @@ import {
   summarizeQueue,
   syncQueueProgress,
 } from "./claim_queue.mjs";
+import {
+  PLATFORM_CAPABILITIES,
+  VERIFICATION_STATUS,
+  indexVerificationResults,
+  sanitizeLink,
+  selectVerificationOffers,
+  summarizeVerificationResults,
+} from "./verification.mjs";
+import {
+  createVerificationClient,
+  readItchOAuthFragment,
+} from "./verification_client.mjs";
 
 const TYPE_LABELS = {
   keep: "永久入库",
@@ -39,6 +51,7 @@ const GROUPS = [
 
 const state = {
   offers: [],
+  historyOffers: [],
   filter: "all",
   platform: "all",
   queue: createDefaultQueueState(),
@@ -47,6 +60,13 @@ const state = {
   batchOpen: false,
   clearArmed: false,
   clearTimer: null,
+  verificationClient: createVerificationClient(window.GAME_XIAOER_VERIFICATION_CONFIG || {}),
+  verificationSession: null,
+  verificationLinks: [],
+  verificationResults: {},
+  verificationBusy: false,
+  verificationDeleteArmed: false,
+  verificationDeleteTimer: null,
 };
 
 function formatDate(value, timezone) {
@@ -174,6 +194,7 @@ function render() {
       const progressNode = fragment.querySelector(".local-progress");
       progressNode.textContent = PROGRESS_LABELS[progress] || "";
       progressNode.hidden = !PROGRESS_LABELS[progress];
+      renderOfferVerification(fragment, offer);
       cards.append(fragment);
     }
     section.append(heading, cards);
@@ -181,6 +202,300 @@ function render() {
   }
 
   empty.hidden = offers.length > 0;
+}
+
+function renderOfferVerification(fragment, offer) {
+  const container = fragment.querySelector(".offer-verification");
+  const result = state.verificationResults[offer.offer_id];
+  if (!result) {
+    container.hidden = true;
+    return;
+  }
+  const meta = VERIFICATION_STATUS[result.status] || VERIFICATION_STATUS.verification_error;
+  const badge = fragment.querySelector(".verification-badge");
+  badge.textContent = meta.label;
+  badge.className = `verification-badge is-${meta.tone}`;
+  fragment.querySelector(".verification-detail").textContent = result.detail || meta.description;
+  fragment.querySelector(".verification-time").textContent = result.checked_at
+    ? `核验于 ${formatDate(result.checked_at, "Asia/Shanghai")}`
+    : "";
+  const refresh = fragment.querySelector(".verification-refresh");
+  refresh.dataset.offerId = offer.offer_id;
+  refresh.disabled = state.verificationBusy;
+  container.hidden = false;
+}
+
+function setVerificationMessage(message, tone = "") {
+  const node = document.querySelector("#verification-message");
+  node.textContent = message || "";
+  node.dataset.tone = tone;
+}
+
+function getVerificationOffers() {
+  return selectVerificationOffers(state.offers, state.historyOffers);
+}
+
+function linkForPlatform(platform) {
+  return state.verificationLinks.find((item) => item.platform === platform) || null;
+}
+
+function renderVerificationHub() {
+  const client = state.verificationClient;
+  const session = state.verificationSession;
+  const disabled = client.mode === "disabled";
+  const loginTest = client.mode === "login_test";
+  const disabledNotice = document.querySelector("#verification-disabled");
+  disabledNotice.hidden = !(disabled || loginTest);
+  document.querySelector("#verification-disabled-reason").textContent = loginTest
+    ? "当前只验收邮件登录回跳，不开放邮箱自助发送、游戏平台关联或游戏库核验。"
+    : client.config?.reason
+    || "账号后端完成配置前，继续使用下方批量确认助手。";
+  document.querySelector("#verification-login").hidden = disabled || loginTest || Boolean(session);
+  const emailFlow = client.config?.email_flow || "magic_link";
+  document.querySelector("#verification-send-code").textContent = emailFlow === "otp" ? "发送验证码" : "发送登录链接";
+  if (emailFlow === "magic_link") document.querySelector("#verification-code-row").hidden = true;
+  document.querySelector("#verification-account").hidden = !session;
+  document.querySelector("#verification-actions").hidden = !session || loginTest;
+  document.querySelector("#verification-account-state").textContent = session
+    ? "已登录"
+    : loginTest ? "等待测试链接" : (disabled ? "尚未开放" : "未登录");
+  document.querySelector("#verification-account-email").textContent = session?.email || "";
+
+  const counts = summarizeVerificationResults(state.verificationResults);
+  const hasResults = Object.keys(state.verificationResults).length > 0;
+  document.querySelector("#verification-results-summary").hidden = !hasResults;
+  document.querySelector("#verification-confirmed-count").textContent = String(counts.confirmed_owned);
+  document.querySelector("#verification-likely-count").textContent = String(counts.likely_owned_activity);
+  document.querySelector("#verification-undetected-count").textContent = String(counts.not_detected);
+  document.querySelector("#verification-run").disabled = state.verificationBusy || !state.verificationLinks.length;
+  renderVerificationPlatforms();
+}
+
+function renderVerificationPlatforms() {
+  const container = document.querySelector("#verification-platforms");
+  const template = document.querySelector("#verification-platform-template");
+  container.replaceChildren();
+  container.hidden = state.verificationClient.mode === "login_test";
+  if (container.hidden) return;
+  for (const capability of PLATFORM_CAPABILITIES) {
+    const fragment = template.content.cloneNode(true);
+    const link = linkForPlatform(capability.platform);
+    fragment.querySelector(".verification-platform-name").textContent = capability.label;
+    fragment.querySelector(".verification-platform-description").textContent = capability.description;
+    const status = fragment.querySelector(".verification-platform-status");
+    status.textContent = link ? `已关联${link.display_name ? ` · ${link.display_name}` : ""}` : platformStatusLabel(capability);
+    status.classList.toggle("is-linked", Boolean(link));
+    const button = fragment.querySelector(".verification-platform-button");
+    const libraryLink = fragment.querySelector(".verification-library-link");
+    if (capability.libraryUrl) {
+      libraryLink.href = capability.libraryUrl;
+      libraryLink.hidden = false;
+    }
+    if (link) {
+      button.textContent = "解除关联";
+      button.dataset.action = "unlink";
+      button.dataset.platform = capability.platform;
+      button.disabled = state.verificationBusy;
+    } else if (capability.capability === "official_library") {
+      button.textContent = state.verificationClient.mode === "disabled"
+        ? "尚未开放"
+        : state.verificationSession ? "关联账号" : "登录后关联";
+      button.dataset.action = "link";
+      button.dataset.platform = capability.platform;
+      button.disabled = !state.verificationSession || state.verificationBusy;
+    } else {
+      button.hidden = true;
+    }
+    container.append(fragment);
+  }
+}
+
+function platformStatusLabel(capability) {
+  if (state.verificationClient.mode === "disabled" && capability.capability === "official_library") return "等待后端上线";
+  if (capability.capability === "official_library") return "可关联核验";
+  if (capability.capability === "public_activity_gate") return "公开数据源待验收";
+  return "暂无法核验";
+}
+
+async function refreshVerificationAccount() {
+  state.verificationSession = state.verificationClient.getSession();
+  if (!state.verificationSession) {
+    state.verificationLinks = [];
+    state.verificationResults = {};
+    renderVerificationHub();
+    render();
+    return;
+  }
+  if (state.verificationClient.mode === "login_test") {
+    state.verificationLinks = [];
+    state.verificationResults = {};
+    renderVerificationHub();
+    render();
+    return;
+  }
+  const [links, results] = await Promise.all([
+    state.verificationClient.listLinks(),
+    state.verificationClient.listResults(),
+  ]);
+  state.verificationLinks = links.map(sanitizeLink).filter(Boolean);
+  state.verificationResults = indexVerificationResults(results);
+  renderVerificationHub();
+  render();
+}
+
+function bindVerification() {
+  document.querySelector("#verification-send-code").addEventListener("click", async () => {
+    const email = document.querySelector("#verification-email").value.trim();
+    await withVerificationBusy(async () => {
+      const response = await state.verificationClient.requestCode(email);
+      const expectsCode = Boolean(response.demo_code) || response.delivery === "otp";
+      document.querySelector("#verification-code-row").hidden = !expectsCode;
+      setVerificationMessage(response.demo_code
+        ? `本地演示验证码：${response.demo_code}`
+        : expectsCode
+          ? "验证码已发送，请检查邮箱。"
+          : "登录链接已发送，请在当前设备打开邮件中的链接。", "success");
+      if (expectsCode) document.querySelector("#verification-code").focus();
+    });
+  });
+
+  document.querySelector("#verification-login").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = document.querySelector("#verification-email").value.trim();
+    const code = document.querySelector("#verification-code").value.trim();
+    await withVerificationBusy(async () => {
+      await state.verificationClient.verifyCode(email, code);
+      setVerificationMessage("登录成功，可以关联游戏平台。", "success");
+      await refreshVerificationAccount();
+    });
+  });
+
+  document.querySelector("#verification-sign-out").addEventListener("click", async () => {
+    await withVerificationBusy(async () => {
+      await state.verificationClient.logout();
+      setVerificationMessage("已退出登录。", "success");
+      await refreshVerificationAccount();
+    });
+  });
+
+  document.querySelector("#verification-platforms").addEventListener("click", async (event) => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+    const platform = button.dataset.platform;
+    await withVerificationBusy(async () => {
+      if (button.dataset.action === "unlink") {
+        await state.verificationClient.unlink(platform);
+        setVerificationMessage("平台关联已解除，相关核验结果已清除。", "success");
+        await refreshVerificationAccount();
+        return;
+      }
+      const response = await state.verificationClient.startLink(platform);
+      if (response.authorize_url) {
+        location.assign(response.authorize_url);
+        return;
+      }
+      setVerificationMessage("平台账号已关联。", "success");
+      await refreshVerificationAccount();
+    });
+  });
+
+  document.querySelector("#verification-run").addEventListener("click", async () => {
+    await runVerificationAndRefresh();
+  });
+
+  document.querySelector("#offer-list").addEventListener("click", async (event) => {
+    const button = event.target.closest(".verification-refresh");
+    if (!button) return;
+    await runVerificationAndRefresh(button.dataset.offerId);
+  });
+
+  document.querySelector("#verification-clear").addEventListener("click", async () => {
+    await withVerificationBusy(async () => {
+      await state.verificationClient.clearResults();
+      state.verificationResults = {};
+      setVerificationMessage("核验结果已清除，平台关联仍然保留。", "success");
+      renderVerificationHub();
+      render();
+    });
+  });
+
+  document.querySelector("#verification-delete-account").addEventListener("click", async (event) => {
+    const button = event.currentTarget;
+    if (!state.verificationDeleteArmed) {
+      state.verificationDeleteArmed = true;
+      button.textContent = "再次点击确认删除";
+      clearTimeout(state.verificationDeleteTimer);
+      state.verificationDeleteTimer = setTimeout(() => {
+        state.verificationDeleteArmed = false;
+        button.textContent = "删除领取状态账号";
+      }, 5000);
+      return;
+    }
+    clearTimeout(state.verificationDeleteTimer);
+    state.verificationDeleteArmed = false;
+    await withVerificationBusy(async () => {
+      await state.verificationClient.deleteAccount();
+      button.textContent = "删除领取状态账号";
+      setVerificationMessage("领取状态账号、平台关联和核验结果已删除。", "success");
+      await refreshVerificationAccount();
+    });
+  });
+}
+
+async function runVerificationAndRefresh(focusOfferId = null) {
+  await withVerificationBusy(async () => {
+    const results = await state.verificationClient.runVerification(getVerificationOffers());
+    state.verificationResults = indexVerificationResults(results);
+    const focus = focusOfferId ? state.verificationResults[focusOfferId] : null;
+    const suffix = focus ? `当前活动状态：${VERIFICATION_STATUS[focus.status]?.label || "已更新"}。` : "";
+    setVerificationMessage(`核验完成：已检查 ${Object.keys(state.verificationResults).length} 条限免记录。${suffix}`, "success");
+    await refreshVerificationAccount();
+  });
+}
+
+async function withVerificationBusy(action) {
+  if (state.verificationBusy) return;
+  state.verificationBusy = true;
+  renderVerificationHub();
+  try {
+    await action();
+  } catch (error) {
+    setVerificationMessage(error.message || "操作没有完成，请稍后重试。", "error");
+  } finally {
+    state.verificationBusy = false;
+    renderVerificationHub();
+  }
+}
+
+async function initializeVerification() {
+  let authCompleted = false;
+  try {
+    authCompleted = Boolean(state.verificationClient.acceptAuthCallback?.());
+    if (authCompleted) history.replaceState(null, "", `${location.pathname}${location.search}`);
+  } catch (error) {
+    setVerificationMessage(error.message || "邮件登录没有完成，请重新发送登录邮件。", "error");
+  }
+  state.verificationSession = state.verificationClient.getSession();
+  renderVerificationHub();
+  if (authCompleted) setVerificationMessage(
+    state.verificationClient.mode === "login_test"
+      ? "登录回跳测试成功。游戏平台关联和游戏库核验仍未开放。"
+      : "登录成功，可以关联游戏平台。",
+    "success",
+  );
+  const itchCallback = readItchOAuthFragment();
+  if (itchCallback && state.verificationSession) {
+    await withVerificationBusy(async () => {
+      await state.verificationClient.completeItchLink(itchCallback);
+      history.replaceState(null, "", `${location.pathname}${location.search}`);
+      setVerificationMessage("itch.io 账号已关联。", "success");
+    });
+  }
+  if (state.verificationSession) await withVerificationBusy(refreshVerificationAccount);
+  const params = new URLSearchParams(location.search);
+  if (params.get("verification") === "linked") {
+    setVerificationMessage("平台账号已关联，请登录后查看核验状态。", "success");
+  }
 }
 
 function renderMembershipSettings() {
@@ -317,10 +632,15 @@ function bindBatchAssistant() {
 }
 
 async function loadOffers() {
-  const response = await fetch("./offers.json", { cache: "no-store" });
+  const [response, historyResponse] = await Promise.all([
+    fetch("./offers.json", { cache: "no-store" }),
+    fetch("./history.json", { cache: "no-store" }),
+  ]);
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const payload = await response.json();
+  const historyPayload = historyResponse.ok ? await historyResponse.json() : { offers: [] };
   state.offers = Array.isArray(payload.offers) ? payload.offers : [];
+  state.historyOffers = Array.isArray(historyPayload.offers) ? historyPayload.offers : [];
   state.offers.sort((a, b) => {
     const aEnd = a.ends_at ? new Date(a.ends_at).valueOf() : Number.POSITIVE_INFINITY;
     const bEnd = b.ends_at ? new Date(b.ends_at).valueOf() : Number.POSITIVE_INFINITY;
@@ -344,11 +664,15 @@ async function loadOffers() {
 bindFilters();
 bindPlatformFilter();
 bindBatchAssistant();
-loadOffers().catch(() => {
-  document.querySelector("#next-deadline").textContent = "数据暂时不可用，请稍后再看";
-  renderBatchAssistant();
-  render();
-});
+bindVerification();
+loadOffers()
+  .then(initializeVerification)
+  .catch(() => {
+    document.querySelector("#next-deadline").textContent = "数据暂时不可用，请稍后再看";
+    renderBatchAssistant();
+    renderVerificationHub();
+    render();
+  });
 
 setInterval(() => {
   renderBatchAssistant();
