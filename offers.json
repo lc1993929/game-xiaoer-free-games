@@ -1,9 +1,12 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-31T02:56:20.998Z",
+  "generated_at": "2026-08-31T15:57:59.317Z",
   "offers": [
     {
       "offer_id": "epic:8401414902e84f2cb9afa9142f051d32:20260827T1500",
+      "catalog_ids": {
+        "epic_catalog_item_id": "8401414902e84f2cb9afa9142f051d32"
+      },
       "title": "《Breathedge》",
       "platform": "epic",
       "platform_label": "Epic Games Store",
@@ -28,12 +31,15 @@
         "currency": "CNY",
         "display": "免费"
       },
-      "verified_at": "2026-08-31T02:56:09.558Z",
+      "verified_at": "2026-08-31T09:00:54.161Z",
       "reminder_level": "deadline_alert",
       "image_url": "https://cdn1.epicgames.com/08ae29e4f70a4b62aa055e383381aa82/offer/egs-breathedge-redruinssoftworks-s1-2560x1440-76fd08cd9c2d-2560x1440-783424f6d4a7f32a0e75fc074f2f928e.jpg"
     },
     {
       "offer_id": "epic:8f1fcf01e32e4fd4b2ae0a9737992760:20260827T1500",
+      "catalog_ids": {
+        "epic_catalog_item_id": "8f1fcf01e32e4fd4b2ae0a9737992760"
+      },
       "title": "Rival Stars Horse Racing : Desktop Edition",
       "platform": "epic",
       "platform_label": "Epic Games Store",
@@ -58,7 +64,7 @@
         "currency": "CNY",
         "display": "免费"
       },
-      "verified_at": "2026-08-31T02:56:09.558Z",
+      "verified_at": "2026-08-31T09:00:54.161Z",
       "reminder_level": "deadline_alert",
       "image_url": "https://cdn1.epicgames.com/spt-assets/3355791f5b4740618adac242cf0dd46c/rival-stars-horse-racing-scu1x.jpg"
     }
