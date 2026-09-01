@@ -202,7 +202,8 @@ export function selectVerificationOffers(activeOffers, historyOffers, now = new 
   const threshold = now.valueOf() - days * 86400000;
   const selected = new Map();
   for (const offer of [...(activeOffers || []), ...(historyOffers || [])]) {
-    if (!offer?.offer_id || !["keep", "subscription"].includes(offer.offer_type)) continue;
+    if (!offer?.offer_id || !["verified", "published"].includes(offer.status)) continue;
+    if (!["keep", "subscription"].includes(offer.offer_type)) continue;
     const end = offer.ends_at ? new Date(offer.ends_at).valueOf() : Number.POSITIVE_INFINITY;
     if (Number.isFinite(end) && end < threshold) continue;
     selected.set(offer.offer_id, offer);

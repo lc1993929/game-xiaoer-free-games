@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-01T03:21:37.085Z",
+  "generated_at": "2026-09-01T07:36:20.393Z",
   "offers": [
     {
       "offer_id": "epic:8401414902e84f2cb9afa9142f051d32:20260827T1500",
@@ -32,6 +32,7 @@
         "display": "免费"
       },
       "verified_at": "2026-08-31T21:03:54.406Z",
+      "status": "verified",
       "reminder_level": "deadline_alert",
       "image_url": "https://cdn1.epicgames.com/08ae29e4f70a4b62aa055e383381aa82/offer/egs-breathedge-redruinssoftworks-s1-2560x1440-76fd08cd9c2d-2560x1440-783424f6d4a7f32a0e75fc074f2f928e.jpg"
     },
@@ -65,8 +66,43 @@
         "display": "免费"
       },
       "verified_at": "2026-08-31T21:03:54.406Z",
+      "status": "verified",
       "reminder_level": "deadline_alert",
       "image_url": "https://cdn1.epicgames.com/spt-assets/3355791f5b4740618adac242cf0dd46c/rival-stars-horse-racing-scu1x.jpg"
+    },
+    {
+      "offer_id": "itch_io:4405770:20260328T0116",
+      "catalog_ids": {
+        "itch_game_id": "4405770"
+      },
+      "title": "Lord of Chaos",
+      "platform": "itch_io",
+      "platform_label": "itch.io",
+      "regions": [
+        "GLOBAL"
+      ],
+      "official_url": "https://hexnut-studios.itch.io/lord-of-chaos",
+      "source_url": "https://itch.io/s/182780/lord-of-chaos-on-sale-for-a-limited-time",
+      "offer_type": "keep",
+      "ownership": "permanent",
+      "membership_required": false,
+      "starts_at": "2026-03-28T01:16:00.000Z",
+      "ends_at": "2026-09-03T17:00:00.000Z",
+      "timezone": "UTC",
+      "original_price": {
+        "amount": 3.99,
+        "currency": "USD",
+        "display": "$3.99"
+      },
+      "current_price": {
+        "amount": 0,
+        "currency": "USD",
+        "display": "免费"
+      },
+      "verified_at": "2026-09-01T07:32:10.000Z",
+      "status": "verified",
+      "reminder_level": "deadline_alert",
+      "image_url": "https://img.itch.zone/aW1nLzI2MjU4NTA2LnBuZw==/original/2D%2BEC3.png"
     }
   ]
 }
