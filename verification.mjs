@@ -35,10 +35,11 @@ export const PLATFORM_CAPABILITIES = Object.freeze([
   {
     platform: "steam_cn",
     label: "Steam 国区",
-    capability: "official_library",
-    linkMethod: "openid",
-    resultLevel: "confirmed",
-    description: "使用 Steam 官方登录；游戏详情需要设为公开。",
+    capability: "unsupported",
+    linkMethod: null,
+    resultLevel: "unsupported",
+    description: "当前没有可用的服务端 Web API Key，首版暂不开放自动核验。",
+    libraryUrl: "https://store.steampowered.com/account/",
   },
   {
     platform: "itch_io",

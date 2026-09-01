@@ -244,19 +244,27 @@ function renderVerificationHub() {
   const session = state.verificationSession;
   const disabled = client.mode === "disabled";
   const loginTest = client.mode === "login_test";
+  const itchTest = client.mode === "itch_test";
   const disabledNotice = document.querySelector("#verification-disabled");
-  disabledNotice.hidden = !(disabled || loginTest);
-  document.querySelector("#verification-disabled-reason").textContent = loginTest
-    ? "当前只验收邮件登录回跳，不开放邮箱自助发送、游戏平台关联或游戏库核验。"
-    : client.config?.reason
-    || "账号后端完成配置前，继续使用下方批量确认助手。";
-  document.querySelector("#verification-login").hidden = disabled || loginTest || Boolean(session);
+  disabledNotice.hidden = !(disabled || loginTest || itchTest);
+  document.querySelector("#verification-disabled-title").textContent = itchTest
+    ? "itch.io 单平台测试"
+    : "领取状态核验尚未开放";
+  document.querySelector("#verification-disabled-reason").textContent = itchTest
+    ? "当前只对既有测试账号开放 itch.io 关联与主动核验；邮箱自助发送和其他平台保持关闭。"
+    : loginTest
+      ? "当前只验收邮件登录回跳，不开放邮箱自助发送、游戏平台关联或游戏库核验。"
+      : client.config?.reason
+      || "账号后端完成配置前，继续使用下方批量确认助手。";
+  document.querySelector("#verification-login").hidden = disabled || loginTest || itchTest || Boolean(session);
   const emailFlow = client.config?.email_flow || "magic_link";
   document.querySelector("#verification-send-code").textContent = emailFlow === "otp" ? "发送验证码" : "发送登录链接";
   if (emailFlow === "magic_link") document.querySelector("#verification-code-row").hidden = true;
   document.querySelector("#verification-account").hidden = !session;
   document.querySelector("#verification-session-test").hidden = !(loginTest && session);
   document.querySelector("#verification-actions").hidden = !session || loginTest;
+  document.querySelector("#verification-clear").hidden = itchTest;
+  document.querySelector("#verification-delete-account").hidden = itchTest;
   document.querySelector("#verification-account-state").textContent = session
     ? "已登录"
     : loginTest ? "等待测试链接" : (disabled ? "尚未开放" : "未登录");
@@ -279,6 +287,7 @@ function renderVerificationPlatforms() {
   container.hidden = state.verificationClient.mode === "login_test";
   if (container.hidden) return;
   for (const capability of PLATFORM_CAPABILITIES) {
+    if (state.verificationClient.mode === "itch_test" && capability.platform !== "itch_io") continue;
     const fragment = template.content.cloneNode(true);
     const link = linkForPlatform(capability.platform);
     fragment.querySelector(".verification-platform-name").textContent = capability.label;
@@ -488,6 +497,8 @@ async function initializeVerification() {
   if (authCompleted) setVerificationMessage(
     state.verificationClient.mode === "login_test"
       ? "登录回跳测试成功。游戏平台关联和游戏库核验仍未开放。"
+      : state.verificationClient.mode === "itch_test"
+        ? "登录成功。当前测试只开放 itch.io 关联与核验。"
       : "登录成功，可以关联游戏平台。",
     "success",
   );

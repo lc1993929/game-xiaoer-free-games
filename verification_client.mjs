@@ -6,14 +6,16 @@ import {
 } from "./verification.mjs";
 
 const APP_SESSION_KEY = "game_xiaoer_auth_session_v1";
+const TEST_PLATFORM_BY_MODE = Object.freeze({ itch_test: "itch_io" });
+const BACKEND_MODES = new Set(["login_test", ...Object.keys(TEST_PLATFORM_BY_MODE), "live"]);
 
 export function normalizeVerificationConfig(value) {
-  const mode = ["disabled", "demo", "login_test", "live"].includes(value?.mode) ? value.mode : "disabled";
+  const mode = ["disabled", "demo", ...BACKEND_MODES].includes(value?.mode) ? value.mode : "disabled";
   const emailFlow = ["magic_link", "otp"].includes(value?.email_flow) ? value.email_flow : "magic_link";
   const supabaseUrl = safeHttpsUrl(value?.supabase_url);
   const anonKey = typeof value?.supabase_anon_key === "string" ? value.supabase_anon_key.trim() : "";
   const functionName = /^[a-z0-9-]+$/.test(value?.function_name || "") ? value.function_name : "library-api";
-  if (["login_test", "live"].includes(mode) && (!supabaseUrl || !anonKey)) {
+  if (BACKEND_MODES.has(mode) && (!supabaseUrl || !anonKey)) {
     return { mode: "disabled", email_flow: emailFlow, reason: "领取状态后端尚未完成配置。", supabase_url: null, supabase_anon_key: "", function_name: functionName };
   }
   return {
@@ -29,7 +31,7 @@ export function normalizeVerificationConfig(value) {
 export function createVerificationClient(rawConfig, storage = globalThis.sessionStorage) {
   const config = normalizeVerificationConfig(rawConfig);
   if (config.mode === "demo") return new DemoVerificationClient(config, storage);
-  if (["login_test", "live"].includes(config.mode)) return new SupabaseVerificationClient(config, storage);
+  if (BACKEND_MODES.has(config.mode)) return new SupabaseVerificationClient(config, storage);
   return new DisabledVerificationClient(config);
 }
 
@@ -224,31 +226,42 @@ class SupabaseVerificationClient {
   }
 
   async listLinks() {
-    if (this.mode !== "live") return [];
+    if (this.mode === "login_test") return [];
+    this.requireBackend();
     const payload = await this.apiFetch("/links");
-    return (payload.links || []).map(sanitizeLink).filter(Boolean);
+    const links = (payload.links || []).map(sanitizeLink).filter(Boolean);
+    const platform = TEST_PLATFORM_BY_MODE[this.mode];
+    return platform ? links.filter((link) => link.platform === platform) : links;
   }
 
   async listResults() {
-    if (this.mode !== "live") return [];
+    if (this.mode === "login_test") return [];
+    this.requireBackend();
     const payload = await this.apiFetch("/verification/results");
-    return Object.values(indexVerificationResults(payload.results || []));
+    const results = Object.values(indexVerificationResults(payload.results || []));
+    const platform = TEST_PLATFORM_BY_MODE[this.mode];
+    return platform ? results.filter((result) => result.platform === platform) : results;
   }
 
   async startLink(platform) {
-    this.requireLive();
+    this.requirePlatform(platform);
     return this.apiFetch(`/links/${encodeURIComponent(platform)}/start`, { method: "POST" });
   }
 
   async completeItchLink({ state, token }) {
-    this.requireLive();
+    this.requirePlatform("itch_io");
     return this.apiFetch("/callbacks/itch", { method: "POST", body: { state, token } });
   }
 
   async runVerification() {
-    this.requireLive();
-    const payload = await this.apiFetch("/verification/run", { method: "POST" });
-    return Object.values(indexVerificationResults(payload.results || []));
+    this.requireBackend();
+    const testPlatform = TEST_PLATFORM_BY_MODE[this.mode];
+    const options = testPlatform
+      ? { method: "POST", body: { platforms: [testPlatform] } }
+      : { method: "POST" };
+    const payload = await this.apiFetch("/verification/run", options);
+    const results = Object.values(indexVerificationResults(payload.results || []));
+    return testPlatform ? results.filter((result) => result.platform === testPlatform) : results;
   }
 
   async clearResults() {
@@ -257,7 +270,7 @@ class SupabaseVerificationClient {
   }
 
   async unlink(platform) {
-    this.requireLive();
+    this.requirePlatform(platform);
     await this.apiFetch(`/links/${encodeURIComponent(platform)}`, { method: "DELETE" });
   }
 
@@ -268,7 +281,7 @@ class SupabaseVerificationClient {
   }
 
   async apiFetch(path, options = {}) {
-    this.requireLive();
+    this.requireBackend();
     await this.ensureSession();
     const base = `${this.config.supabase_url}/functions/v1/${this.config.function_name}`;
     return requestJson(`${base}${path}`, {
@@ -303,7 +316,24 @@ class SupabaseVerificationClient {
   }
 
   requireLive() {
+    if (TEST_PLATFORM_BY_MODE[this.mode]) {
+      throw new Error("当前测试只开放 itch.io 关联与核验，不开放全量清理或删除账号");
+    }
     if (this.mode !== "live") throw new Error("当前只开放邮箱登录回跳测试，游戏平台关联和核验尚未开放");
+  }
+
+  requireBackend() {
+    if (![...Object.keys(TEST_PLATFORM_BY_MODE), "live"].includes(this.mode)) {
+      throw new Error("当前只开放邮箱登录回跳测试，游戏平台关联和核验尚未开放");
+    }
+  }
+
+  requirePlatform(platform) {
+    this.requireBackend();
+    const testPlatform = TEST_PLATFORM_BY_MODE[this.mode];
+    if (testPlatform && platform !== testPlatform) {
+      throw new Error("当前测试仅开放 itch.io 关联与核验");
+    }
   }
 }
 
