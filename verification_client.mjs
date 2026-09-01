@@ -47,7 +47,9 @@ export function readItchOAuthFragment(locationLike = globalThis.location) {
 
 export function readSupabaseAuthFragment(locationLike = globalThis.location) {
   const fragment = new URLSearchParams(String(locationLike?.hash || "").replace(/^#/, ""));
-  if (!fragment.get("access_token") || fragment.get("platform") === "itch_io") return null;
+  const query = new URLSearchParams(String(locationLike?.search || "").replace(/^\?/, ""));
+  const callbackPlatform = fragment.get("platform") || query.get("oauth");
+  if (!fragment.get("access_token") || callbackPlatform === "itch_io") return null;
   const accessToken = fragment.get("access_token");
   const expiresIn = Number(fragment.get("expires_in") || 3600);
   return {
