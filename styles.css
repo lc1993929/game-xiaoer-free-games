@@ -338,11 +338,38 @@ h1 {
 
 footer { padding: 28px 0 44px; color: var(--muted); font-size: 12px; }
 footer p { margin: 0 0 8px; }
+.footer-link, .back-link { color: var(--green); font-weight: 800; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+.privacy-masthead, .privacy-content, .privacy-footer {
+  width: min(100% - 32px, 720px);
+  margin-inline: auto;
+}
+.privacy-masthead { padding: 32px 0 18px; }
+.privacy-masthead .eyebrow { margin-top: 28px; }
+.privacy-masthead h1 { font-size: clamp(30px, 8vw, 44px); }
+.privacy-meta { margin: 10px 0 0; color: var(--muted); font-size: 12px; }
+.draft-notice { margin: 18px 0 0; border-radius: 14px; padding: 12px 14px; background: var(--paper); color: var(--muted); font-size: 13px; }
+.draft-notice strong { display: block; color: var(--teal); }
+.privacy-content { display: grid; gap: 14px; }
+.privacy-content section { border: 1px solid var(--rule); border-radius: 18px; padding: 20px; background: var(--white); }
+.privacy-content h2 { margin: 0 0 10px; color: var(--teal); font-size: 19px; line-height: 1.35; }
+.privacy-content p, .privacy-content li, .privacy-content dd { color: var(--muted); font-size: 14px; }
+.privacy-content p { margin: 0; }
+.privacy-content p + p { margin-top: 10px; }
+.privacy-content ul { margin: 0; padding-left: 1.25em; }
+.privacy-content li + li { margin-top: 6px; }
+.privacy-content code { border-radius: 5px; padding: 1px 4px; background: var(--soft); color: var(--teal); font-size: .92em; }
+.retention-list { margin: 12px 0 0; }
+.retention-list div { padding: 10px 0; border-top: 1px solid var(--rule); }
+.retention-list dt { color: var(--teal); font-size: 13px; font-weight: 800; }
+.retention-list dd { margin: 2px 0 0; }
+.privacy-footer { padding-top: 22px; }
 
 [hidden] { display: none !important; }
 
 @media (max-width: 430px) {
   .masthead, main, footer { width: min(100% - 24px, 720px); }
+  .privacy-masthead, .privacy-content, .privacy-footer { width: min(100% - 24px, 720px); }
   .masthead { grid-template-columns: 48px minmax(0, 1fr); gap: 12px; padding-top: 24px; }
   .brand-mark { width: 48px; border-radius: 15px; font-size: 15px; }
   .summary { display: block; padding: 18px; }
@@ -361,6 +388,7 @@ footer p { margin: 0 0 8px; }
   .workflow-actions { grid-template-columns: 1fr; }
   .offer-action { align-items: stretch; flex-direction: column; }
   .claim-link { text-align: center; }
+  .privacy-content section { padding: 17px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
