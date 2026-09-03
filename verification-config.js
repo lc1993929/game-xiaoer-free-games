@@ -1,8 +1,8 @@
 window.GAME_XIAOER_VERIFICATION_CONFIG = {
   "schema_version": 1,
-  "mode": "login_test",
+  "mode": "live",
   "email_flow": "otp",
-  "reason": "当前仅开放邮箱登录与后端会话检查，游戏平台关联和游戏库核验保持关闭。",
+  "reason": "已开放邮箱 OTP 登录与 itch.io 主动领取状态核验；其余平台继续保持不可核验。",
   "supabase_url": "https://btrexrewjapwhaqifyfn.supabase.co",
   "supabase_anon_key": "sb_publishable_HtC0xKAHQsc3C-gWQuINew_-oDa1gDj",
   "function_name": "library-api",
