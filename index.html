@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#173B3A">
   <title>游戏小二·限免雷达</title>
-  <meta name="description" content="只收录已经从官方页面核验的免费游戏活动，按到期时间排序。">
+  <meta name="description" content="汇总各平台已核验的免费游戏官方领取入口，并记录你的领取状态。">
   <meta property="og:title" content="游戏小二·限免雷达">
-  <meta property="og:description" content="永久入库、会员可领、限时畅玩和新试玩，一页看清。">
+  <meta property="og:description" content="官方领取入口、结束时间和我的已领取记录，一页看清。">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://lc1993929.github.io/game-xiaoer-free-games/og.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -16,245 +16,24 @@
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <header class="masthead">
-    <div class="brand-mark" aria-hidden="true">小二</div>
-    <div>
-      <p class="eyebrow">游戏小二</p>
-      <h1>限免雷达</h1>
-      <p class="lede">只放已经核验的官方领取入口。可以逐项浏览，也可以用批量确认助手一次处理今天的清单。</p>
-    </div>
-  </header>
-
+  <header class="masthead"><div class="brand-mark" aria-hidden="true">小二</div><div><p class="eyebrow">游戏小二</p><h1>限免雷达</h1><p class="lede">只放已经核验的官方领取入口。领取完成后，你可以手动记为“已领取”。</p></div></header>
   <main>
-    <section class="summary" aria-labelledby="summary-title">
-      <div>
-        <p class="eyebrow">当前可处理</p>
-        <h2 id="summary-title"><span id="active-count">0</span> 项活动</h2>
-      </div>
-      <p id="next-deadline" class="deadline">正在核验今天的活动</p>
+    <section class="summary" aria-labelledby="summary-title"><div><p class="eyebrow">当前可领取</p><h2 id="summary-title"><span id="active-count">0</span> 项活动</h2></div><p id="next-deadline" class="deadline">正在核验今天的活动</p></section>
+    <section class="claim-account" aria-labelledby="claim-account-title">
+      <div class="claim-account-heading"><div><p class="eyebrow">可选功能</p><h2 id="claim-account-title">跨设备同步</h2></div><span id="claim-account-state" class="account-state">未登录</span></div>
+      <p class="claim-account-lede">不登录也能记录；登录后会把本机记录与云端合并。这里不关联游戏平台，也不读取游戏库。</p>
+      <form id="claim-login" class="claim-login" novalidate><label for="claim-email">邮箱</label><div class="claim-form-row"><input id="claim-email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required><button id="claim-send-code" class="secondary-button" type="button">发送验证码</button></div><label class="claim-consent"><input id="claim-consent-input" type="checkbox"><span>我已阅读<a href="./privacy.html" target="_blank" rel="noopener noreferrer">隐私说明</a>，并同意将邮箱账号和手动领取记录用于跨设备同步。</span></label><div id="claim-code-row" class="claim-form-row" hidden><input id="claim-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="邮件验证码"><button class="primary-inline-button" type="submit">登录</button></div></form>
+      <div id="claim-account-panel" class="claim-account-panel" hidden><div><span>当前账号</span><strong id="claim-account-email"></strong></div><div class="claim-account-actions"><button id="claim-sign-out" class="text-button" type="button">退出登录</button><button id="claim-delete-account" class="text-button danger" type="button">删除同步账号</button></div></div><p id="claim-message" class="claim-message" role="status" aria-live="polite"></p>
     </section>
-
-    <section class="verification-hub" aria-labelledby="verification-title">
-      <div class="verification-heading">
-        <div>
-          <p class="eyebrow">只核对限免清单</p>
-          <h2 id="verification-title">我的领取状态</h2>
-        </div>
-        <span id="verification-account-state" class="account-state">未登录</span>
-      </div>
-      <p class="verification-lede">关联游戏平台后，可以检查当前及最近 90 天的限免。只有官方游戏库返回的结果才会标为“确认在库”；奖杯、成就或游玩记录只会标为“推定已拥有”。</p>
-
-      <div id="verification-disabled" class="verification-notice" role="status" hidden>
-        <strong id="verification-disabled-title">领取状态核验尚未开放</strong>
-        <span id="verification-disabled-reason">账号后端完成配置前，继续使用下方批量确认助手。</span>
-      </div>
-
-      <form id="verification-login" class="verification-login" novalidate hidden>
-        <label for="verification-email">邮箱</label>
-        <div class="verification-form-row">
-          <input id="verification-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required>
-          <button id="verification-send-code" class="secondary-button" type="button">发送登录链接</button>
-        </div>
-        <label id="verification-cross-border-consent" class="verification-consent" hidden>
-          <input id="verification-cross-border-consent-input" type="checkbox">
-          <span>我已阅读<a href="./privacy.html" target="_blank" rel="noopener noreferrer">隐私说明</a>，并单独同意将邮箱登录账号、平台用户标识与授权范围、限免匹配结果提供给 Supabase, Inc.，在韩国首尔处理。</span>
-        </label>
-        <div id="verification-code-row" class="verification-form-row" hidden>
-          <input id="verification-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="邮件验证码">
-          <button id="verification-sign-in" class="primary-inline-button" type="submit">登录</button>
-        </div>
-      </form>
-
-      <div id="verification-account" class="verification-account" hidden>
-        <div>
-          <span>当前账号</span>
-          <strong id="verification-account-email"></strong>
-        </div>
-        <button id="verification-sign-out" class="text-button" type="button">退出登录</button>
-      </div>
-
-      <div id="verification-session-test" class="verification-actions" hidden>
-        <button id="verification-check-session" class="primary-button" type="button">验证后端会话</button>
-      </div>
-
-      <p id="verification-message" class="verification-message" role="status" aria-live="polite"></p>
-
-      <div id="verification-results-summary" class="verification-results-summary" hidden>
-        <div><strong id="verification-confirmed-count">0</strong><span>确认在库</span></div>
-        <div><strong id="verification-likely-count">0</strong><span>推定拥有</span></div>
-        <div><strong id="verification-undetected-count">0</strong><span>未检测到</span></div>
-      </div>
-
-      <div id="verification-platforms" class="verification-platforms" aria-label="游戏平台关联状态"></div>
-
-      <div id="verification-actions" class="verification-actions" hidden>
-        <button id="verification-run" class="primary-button" type="button">立即核验限免清单</button>
-        <button id="verification-clear" class="text-button" type="button">清除核验结果</button>
-        <button id="verification-withdraw-consent" class="text-button danger" type="button">撤回境外处理同意</button>
-        <button id="verification-delete-account" class="text-button danger" type="button">删除领取状态账号</button>
-      </div>
-
-      <details class="verification-explanation">
-        <summary>结果怎么判断？</summary>
-        <dl>
-          <div><dt>确认在库</dt><dd>官方游戏库或权益接口明确返回当前账号拥有该商品。</dd></div>
-          <div><dt>推定已拥有</dt><dd>发现奖杯、成就或游玩记录；可能来自订阅、试玩、共享或历史访问。</dd></div>
-          <div><dt>未检测到</dt><dd>本次没有发现匹配记录，不代表一定没有领取。</dd></div>
-        </dl>
-      </details>
-    </section>
-
-    <section class="batch-assistant" aria-labelledby="batch-assistant-title">
-      <div class="batch-intro">
-        <div>
-          <p class="eyebrow">本机批量清单</p>
-          <h2 id="batch-assistant-title">批量确认助手</h2>
-        </div>
-        <p>助手只负责排序和记录。每一项都要由你在官方页面亲手确认，页面不会操作账号，也不能验证是否真正入库。</p>
-      </div>
-      <div class="batch-counts" aria-label="本机处理进度">
-        <div><strong id="batch-pending-count">0</strong><span>待处理</span></div>
-        <div><strong id="batch-confirmed-count">0</strong><span>已确认</span></div>
-        <div><strong id="batch-skipped-count">0</strong><span>已跳过</span></div>
-      </div>
-      <button id="batch-start" class="primary-button" type="button">开始处理 <span id="batch-total-count">0</span> 项</button>
-      <p id="storage-warning" class="storage-warning" role="status" hidden></p>
-      <details class="membership-settings">
-        <summary>会员设置与本机记录</summary>
-        <p id="membership-hidden" class="settings-note">会员设置只保存在当前浏览器。</p>
-        <div class="membership-grid">
-          <label><input type="checkbox" data-membership-platform="prime_gaming"> 我有 Prime Gaming</label>
-          <label><input type="checkbox" data-membership-platform="ps_plus_hk"> 我有 PlayStation Plus 港区</label>
-          <label><input type="checkbox" data-membership-platform="xbox_free_play_days_hk"> 我有 Xbox 会员港区</label>
-          <label><input type="checkbox" data-membership-platform="nintendo_switch_online_hk"> 我有 Nintendo Switch Online 港区</label>
-        </div>
-        <div class="record-actions">
-          <button id="batch-reset" class="text-button" type="button">重新处理当前清单</button>
-          <button id="batch-clear" class="text-button danger" type="button">清除本机记录</button>
-        </div>
-      </details>
-    </section>
-
-    <section id="batch-workflow" class="batch-workflow" aria-labelledby="batch-workflow-title" hidden>
-      <div class="workflow-header">
-        <div>
-          <p id="batch-position" class="eyebrow">准备清单</p>
-          <h2 id="batch-workflow-title">逐项确认</h2>
-        </div>
-        <button id="batch-close" class="close-button" type="button" aria-label="关闭批量确认助手">关闭</button>
-      </div>
-      <div id="batch-active">
-        <div class="batch-meta">
-          <span id="batch-platform"></span>
-          <span id="batch-region"></span>
-        </div>
-        <h3 id="batch-title-current"></h3>
-        <dl class="batch-details">
-          <div><dt>所有权</dt><dd id="batch-ownership"></dd></div>
-          <div><dt>会员</dt><dd id="batch-membership"></dd></div>
-          <div><dt>结束时间</dt><dd id="batch-deadline"></dd></div>
-        </dl>
-        <a id="batch-open-link" class="batch-open-link" rel="noopener noreferrer" target="_blank">打开官方页面</a>
-        <p id="batch-confirm-hint" class="confirm-hint">先打开官方页面，返回后才能记录为已确认。</p>
-        <div class="workflow-actions">
-          <button id="batch-confirm" class="confirm-button" type="button" disabled>我已在官方页面确认</button>
-          <button id="batch-skip" class="skip-button" type="button">暂时跳过</button>
-        </div>
-      </div>
-      <div id="batch-complete" class="batch-complete" hidden>
-        <p class="complete-mark" aria-hidden="true">✓</p>
-        <h3>这次清单处理完了</h3>
-        <p>本机记录：已确认 <strong id="complete-confirmed">0</strong> 项，已跳过 <strong id="complete-skipped">0</strong> 项。</p>
-        <p>实际入库结果请到对应平台游戏库查看。</p>
-      </div>
-    </section>
-
-    <nav class="filters" aria-label="活动筛选">
-      <button class="filter is-active" type="button" data-filter="all" aria-pressed="true">全部</button>
-      <button class="filter" type="button" data-filter="keep" aria-pressed="false">永久入库</button>
-      <button class="filter" type="button" data-filter="subscription" aria-pressed="false">会员可领</button>
-      <button class="filter" type="button" data-filter="free_weekend" aria-pressed="false">限时畅玩</button>
-      <button class="filter" type="button" data-filter="trial" aria-pressed="false">试玩与常驻免费</button>
-    </nav>
-
-    <label class="platform-picker" for="platform-filter">
-      <span>平台</span>
-      <select id="platform-filter">
-        <option value="all">全部平台</option>
-      </select>
-    </label>
-
-    <div id="offer-list" class="offer-list" aria-live="polite"></div>
-
-    <section id="empty-state" class="empty-state">
-      <p class="empty-kicker">雷达运行中</p>
-      <h2>今天还没有可公开的活动</h2>
-      <p>候选活动会先核对价格、结束时间、区服和领取后的所有权。没核清的内容不会出现在这里。</p>
-    </section>
-
-    <section class="ownership-guide" aria-labelledby="ownership-title">
-      <p class="eyebrow">先看清再领取</p>
-      <h2 id="ownership-title">四种“免费”不是一回事</h2>
-      <dl>
-        <div><dt>永久拥有</dt><dd>在活动期内完成领取，之后仍能游玩。</dd></div>
-        <div><dt>订阅有效期内可玩</dt><dd>需要对应会员，订阅结束后通常无法继续游玩。</dd></div>
-        <div><dt>活动期可玩</dt><dd>免费周末结束后会失去游玩权限。</dd></div>
-        <div><dt>无需领取</dt><dd>Demo 或常驻免费游戏，可以直接进入官方商店。</dd></div>
-      </dl>
-    </section>
+    <section class="claimed-history" aria-labelledby="claimed-history-title"><div class="claimed-history-heading"><div><p class="eyebrow">手动记录</p><h2 id="claimed-history-title">我的已领取</h2></div><strong id="claimed-total">0</strong></div><p class="claimed-note">这里只记录你主动点击的状态，不代表游戏平台已经验证入库。</p><div id="claimed-list" class="claimed-list"></div><p id="claimed-empty" class="claimed-empty">还没有已领取记录。</p></section>
+    <nav class="filters" aria-label="活动筛选"><button class="filter is-active" type="button" data-filter="all" aria-pressed="true">全部</button><button class="filter" type="button" data-filter="keep" aria-pressed="false">永久入库</button><button class="filter" type="button" data-filter="subscription" aria-pressed="false">会员可领</button><button class="filter" type="button" data-filter="free_weekend" aria-pressed="false">限时畅玩</button><button class="filter" type="button" data-filter="trial" aria-pressed="false">试玩与常驻免费</button></nav>
+    <label class="platform-picker" for="platform-filter"><span>平台</span><select id="platform-filter"><option value="all">全部平台</option></select></label><div id="offer-list" class="offer-list" aria-live="polite"></div>
+    <section id="empty-state" class="empty-state"><p class="empty-kicker">雷达运行中</p><h2>今天还没有可公开的活动</h2><p>价格、结束时间、区服和所有权没有核清前，不会放到这里。</p></section>
+    <section class="ownership-guide" aria-labelledby="ownership-title"><p class="eyebrow">先看清再领取</p><h2 id="ownership-title">四种“免费”不是一回事</h2><dl><div><dt>永久拥有</dt><dd>活动期内完成领取，之后仍能游玩。</dd></div><div><dt>订阅有效期内可玩</dt><dd>需要对应会员，订阅结束后通常无法继续游玩。</dd></div><div><dt>活动期可玩</dt><dd>免费周末结束后会失去游玩权限。</dd></div><div><dt>无需领取</dt><dd>Demo 或常驻免费游戏，可以直接进入官方商店。</dd></div></dl></section>
   </main>
-
-  <footer>
-    <p>数据来自官方商店、官方新闻和官方活动页。页面不保存游戏平台密码或 Cookie，不模拟点击，也不会替你领取。</p>
-    <p>领取状态功能只保存与限免活动匹配的结果，不保存完整游戏库；平台授权可随时解绑并删除。</p>
-    <p>批量确认进度和会员设置只保存在当前浏览器，不会跨设备同步。</p>
-    <p><a class="footer-link" href="./privacy.html">查看“我的领取状态”隐私说明</a></p>
-    <p id="updated-at">等待首次核验</p>
-  </footer>
-
-  <template id="offer-template">
-    <article class="offer-card">
-      <div class="offer-meta">
-        <span class="platform"></span>
-        <span class="region"></span>
-        <span class="type"></span>
-      </div>
-      <h2 class="title"></h2>
-      <p class="ownership"></p>
-      <p class="membership"></p>
-      <p class="local-progress" hidden></p>
-      <div class="offer-verification" hidden>
-        <span class="verification-badge"></span>
-        <p class="verification-detail"></p>
-        <time class="verification-time"></time>
-        <button class="verification-refresh" type="button">重新核验</button>
-      </div>
-      <div class="offer-action">
-        <div>
-          <span class="date-label">结束时间</span>
-          <strong class="ends-at"></strong>
-          <span class="countdown" aria-live="off"></span>
-        </div>
-        <a class="claim-link" rel="noopener noreferrer" target="_blank">前往官方页面</a>
-      </div>
-    </article>
-  </template>
-
-  <template id="verification-platform-template">
-    <article class="verification-platform-card">
-      <div>
-        <h3 class="verification-platform-name"></h3>
-        <p class="verification-platform-description"></p>
-      </div>
-      <div class="verification-platform-footer">
-        <span class="verification-platform-status"></span>
-        <button class="verification-platform-button" type="button"></button>
-        <a class="verification-library-link" target="_blank" rel="noopener noreferrer" hidden>打开平台查看</a>
-      </div>
-    </article>
-  </template>
-
-  <script src="./verification-config.js"></script>
-  <script src="./app.js" type="module"></script>
+  <footer><p>数据来自官方商店、官方新闻和官方活动页。页面不保存游戏平台密码或 Cookie，不模拟点击，也不会替你领取。</p><p>“已领取”是你的手动记录，不代表平台已验证入库。</p><p><a class="footer-link" href="./privacy.html">查看跨设备同步隐私说明</a></p><p id="updated-at">等待首次核验</p></footer>
+  <template id="offer-template"><article class="offer-card"><div class="offer-meta"><span class="platform"></span><span class="region"></span><span class="type"></span></div><h2 class="title"></h2><p class="ownership"></p><p class="membership"></p><div class="offer-action"><div><span class="date-label">结束时间</span><strong class="ends-at"></strong><span class="countdown" aria-live="off"></span></div><div class="offer-buttons"><a class="claim-link" rel="noopener noreferrer" target="_blank">前往官方领取</a><button class="claim-record-button" type="button"></button></div></div></article></template>
+  <template id="claimed-record-template"><article class="claimed-record"><div><strong class="claimed-record-title"></strong><span class="claimed-record-meta"></span></div><button class="claimed-record-remove" type="button">撤销</button></article></template>
+  <script src="./claim-config.js"></script><script type="module" src="./app.js"></script>
 </body>
 </html>

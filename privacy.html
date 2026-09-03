@@ -1,98 +1,10 @@
 <!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#173B3A">
-  <title>领取状态隐私说明｜游戏小二</title>
-  <meta name="description" content="游戏小二·限免雷达“我的领取状态”功能的数据用途、保留期限和用户权利说明。">
-  <link rel="icon" href="./icon.png" type="image/png">
-  <link rel="stylesheet" href="./styles.css">
-</head>
-<body class="privacy-page">
-  <header class="privacy-masthead">
-    <a class="back-link" href="./">← 返回限免雷达</a>
-    <p class="eyebrow">游戏小二 · 限免雷达</p>
-    <h1>领取状态隐私说明</h1>
-    <p class="privacy-meta">版本日期：2026-09-04</p>
-    <p class="draft-notice"><strong>本说明自 2026-09-04 起生效</strong> 当前“我的领取状态”仍处于受控登录测试，尚未向普通用户开放；无需账号的限免浏览和批量确认助手不受影响。</p>
-  </header>
-
-  <main class="privacy-content">
-    <section>
-      <h2>本说明何时生效</h2>
-      <p>运营者已确认并公开发布本版本，本说明自 2026-09-04 起生效。“我的领取状态”在完成真实用户路径验收前仍保持受控登录测试；普通用户仍可使用无需账号的限免浏览和批量确认助手。</p>
-      <p>生效后如处理目的、数据种类、境外接收方或处理地点发生实质变化，运营者会更新版本日期，并在需要时重新征求同意。</p>
-    </section>
-
-    <section>
-      <h2>谁在提供这项功能</h2>
-      <p>本功能由微信公众号“游戏小二”的个人运营者提供并决定数据用途。如需咨询、撤回同意、解绑或删除数据，可通过“游戏小二”公众号会话消息联系运营者；运营者会在核验身份后于法律要求的期限内处理。</p>
-    </section>
-
-    <section>
-      <h2>境外处理与单独同意</h2>
-      <p>邮箱登录账号、平台用户标识与授权范围、限免匹配结果会提供给境外接收方 Supabase, Inc.，并在韩国首尔区域 <code>ap-northeast-2</code> 处理，用于账号登录、保存平台关联和返回核验结果。境外接收方联系方式为 <a href="mailto:privacy@supabase.io">privacy@supabase.io</a>。</p>
-      <p>登录邮箱地址和一次性验证码会交由 Resend 投递。其具体基础设施、分包处理者和适用地区将在正式开放前依据届时公开文件复核。只有当你主动关联 itch.io 并发起核验时，必要的授权与核验请求才会发送至 itch.io 官方服务。</p>
-      <p>正式开放后，页面会在发送登录邮件前单独征求你的同意。你可以拒绝；拒绝后仍可使用不需要账号的限免浏览和批量确认助手。需要向境外接收方行使查询、更正、删除等权利时，可以先通过“游戏小二”公众号会话联系运营者，也可以使用上方联系方式联系境外接收方。</p>
-    </section>
-
-    <section>
-      <h2>我们用数据做什么</h2>
-      <p>“我的领取状态”只核对限免雷达当前活动及最近 90 天已发布活动是否存在拥有或游玩证据。它不建立完整游戏库，不替你领取游戏，也不把游戏记录用于广告画像。</p>
-      <p>系统不会依据这些数据作出对你有重大影响的自动化决定。</p>
-    </section>
-
-    <section>
-      <h2>会保存哪些数据</h2>
-      <ul>
-        <li>邮箱登录账号及 Supabase Auth 运行所需的账户数据；</li>
-        <li>已关联平台的用户标识、显示名和授权范围；</li>
-        <li>itch.io OAuth 令牌的服务端 AES-GCM 密文；</li>
-        <li>与限免活动精确匹配的状态、证据类型、商品标识和核验时间；</li>
-        <li>防止 OAuth 请求伪造的一次性 <code>state</code> 哈希。</li>
-        <li>发送登录验证码前的邮箱哈希、同意版本与短期有效期；其中不保存原始邮箱，只用于阻止没有本次同意声明的直接发码。</li>
-      </ul>
-      <p>我们不保存游戏平台密码、Cookie、浏览器会话、完整游戏库或与限免活动无关的游戏记录。服务端密钥和令牌加密主密钥不会进入网页或公开仓库。</p>
-    </section>
-
-    <section>
-      <h2>数据保存在哪里、多久</h2>
-      <p>后端使用 Supabase 首尔区域 <code>ap-northeast-2</code>。不同数据按以下期限处理：</p>
-      <dl class="retention-list">
-        <div><dt>平台关联与加密授权</dt><dd>保留到你主动解绑或删除领取状态账号。</dd></div>
-        <div><dt>一次性 OAuth 状态</dt><dd>10 分钟失效；已使用或过期超过 24 小时后删除。</dd></div>
-        <div><dt>发送前邮箱预授权</dt><dd>15 分钟失效；已使用或过期超过 24 小时后删除。记录只含邮箱哈希、同意版本和时间。</dd></div>
-        <div><dt>核验运行记录</dt><dd>保留 30 天。</dd></div>
-        <div><dt>限免匹配结果</dt><dd>保留 180 天。</dd></div>
-        <div><dt>邮箱登录账号</dt><dd>保留到你主动删除领取状态账号。</dd></div>
-      </dl>
-    </section>
-
-    <section>
-      <h2>结果代表什么</h2>
-      <p>“确认在库”表示官方游戏库或权益接口返回了精确商品标识。“推定已拥有”只表示出现奖杯、成就或游玩记录。“未检测到”不等于“未领取”。这些结果都不能证明某款游戏一定来自某次限免。</p>
-    </section>
-
-    <section>
-      <h2>你可以控制什么</h2>
-      <ul>
-        <li>解除单个平台关联，并清除该平台核验结果；</li>
-        <li>清除全部核验结果，但保留平台关联；</li>
-        <li>删除领取状态账号及其平台关联、OAuth 状态、运行记录和核验结果。</li>
-      </ul>
-      <p>正式开放后，上述操作会在领取状态页面提供。若页面操作失败，可通过“游戏小二”公众号会话消息联系运营者。</p>
-      <p>你可以撤回境外处理同意。撤回后需要账号的登录、平台关联和领取状态核验将无法继续，但不会影响限免浏览和批量确认助手。撤回不影响撤回前已经完成处理的效力。</p>
-    </section>
-
-    <section>
-      <h2>未成年人</h2>
-      <p>“我的领取状态”不面向未满 14 周岁的未成年人开放。未满 14 周岁的用户请勿提交邮箱或关联平台账号；普通限免浏览仍可在不登录的情况下使用。</p>
-    </section>
-  </main>
-
-  <footer class="privacy-footer">
-    <a class="back-link" href="./">返回限免雷达</a>
-  </footer>
-</body>
-</html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#173B3A"><title>跨设备同步隐私说明｜游戏小二</title><link rel="stylesheet" href="./styles.css"></head>
+<body><header class="privacy-masthead"><a class="back-link" href="./">← 返回限免雷达</a><p class="eyebrow">游戏小二</p><h1>跨设备同步隐私说明</h1><p class="privacy-meta">版本：2026-09-04-manual-v1</p><p class="draft-notice"><strong>本说明自公开发布之日起生效</strong>不登录也能使用官方领取链接和本机记录；只有跨设备同步需要邮箱登录。</p></header>
+<main class="privacy-content">
+<section><h2>我们做什么</h2><p>“已领取”完全由你手动标记。系统不会关联游戏平台账号、读取游戏库、验证是否入库，也不会替你领取游戏。</p></section>
+<section><h2>处理哪些数据</h2><ul><li>邮箱登录账号；</li><li>你手动标记的活动 ID、游戏名称、平台和标记时间。</li></ul><p>不收集游戏平台密码、Cookie、OAuth 令牌、平台用户标识或完整游戏库。</p></section>
+<section><h2>为什么需要境外处理</h2><p>邮箱账号和手动领取记录由 Supabase, Inc. 在韩国首尔处理，用于登录及跨设备同步；一次性验证码通过 Resend 投递。拒绝同意不会影响匿名浏览和本机记录。</p></section>
+<section><h2>保留与删除</h2><p>手动领取记录保留到你撤销单条记录或删除同步账号。退出登录不会删除当前设备的本机镜像。需要删除账号及云端记录时，可通过“游戏小二”公众号联系运营者。</p></section>
+<section><h2>未成年人</h2><p>跨设备同步不面向未满 14 周岁的未成年人开放；无需登录的限免浏览仍可使用。</p></section>
+</main><footer class="privacy-footer"><a class="back-link" href="./">返回限免雷达</a></footer></body></html>

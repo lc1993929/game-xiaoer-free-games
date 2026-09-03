@@ -88,6 +88,33 @@ h1 {
 .summary h2 span { color: var(--orange); font-size: 38px; }
 .deadline { margin: 0; color: var(--muted); font-size: 13px; text-align: right; }
 
+.claim-account, .claimed-history { margin-top: 16px; padding: 22px; border: 1px solid var(--rule); border-radius: 22px; background: var(--white); }
+.claim-account-heading, .claimed-history-heading { display: flex; align-items: start; justify-content: space-between; gap: 18px; }
+.claim-account-heading h2, .claimed-history-heading h2 { margin: 0; color: var(--teal); font-size: 24px; line-height: 1.25; }
+.claim-account-lede, .claimed-note { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+.claim-login { margin-top: 16px; }
+.claim-login > label:first-child { display: block; margin-bottom: 5px; color: var(--teal); font-size: 12px; font-weight: 800; }
+.claim-form-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-top: 8px; }
+.claim-form-row input { min-width: 0; width: 100%; border: 1px solid var(--rule); border-radius: 12px; padding: 10px 12px; background: var(--white); color: var(--ink); font: inherit; font-size: 14px; }
+.claim-form-row input:focus { border-color: var(--green); outline: 3px solid rgba(11,110,105,.12); }
+.claim-consent { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 9px; align-items: start; margin-top: 12px; border: 1px solid var(--rule); border-radius: 12px; padding: 12px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.claim-consent input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--green); }
+.claim-consent a { color: var(--teal); font-weight: 800; }
+.claim-account-panel { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 16px; border-radius: 14px; padding: 10px 12px; background: var(--soft); }
+.claim-account-panel span { display: block; color: var(--muted); font-size: 10px; }
+.claim-account-panel strong { display: block; color: var(--teal); font-size: 13px; overflow-wrap: anywhere; }
+.claim-account-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+.claim-message { min-height: 1.6em; margin: 10px 0 0; color: var(--muted); font-size: 12px; }
+.claim-message[data-tone="success"] { color: var(--green); }
+.claim-message[data-tone="error"] { color: #9a463f; }
+.claimed-history-heading > strong { color: var(--orange); font-size: 34px; line-height: 1; }
+.claimed-list { display: grid; gap: 8px; margin-top: 14px; }
+.claimed-record { display: flex; align-items: center; justify-content: space-between; gap: 14px; border-top: 1px solid var(--rule); padding-top: 10px; }
+.claimed-record-title { display: block; color: var(--teal); font-size: 14px; }
+.claimed-record-meta { display: block; color: var(--muted); font-size: 11px; }
+.claimed-record-remove { flex: 0 0 auto; border: 0; padding: 7px 0; background: transparent; color: #9a463f; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.claimed-empty { margin: 14px 0 0; color: var(--muted); font-size: 13px; }
+
 .verification-hub {
   margin-top: 16px;
   padding: 22px;
@@ -340,6 +367,10 @@ h1 {
   font-weight: 800;
   text-decoration: none;
 }
+.offer-buttons { display: grid; min-width: 150px; gap: 8px; }
+.claim-record-button { border: 1px solid var(--rule); border-radius: 12px; padding: 9px 12px; background: var(--white); color: var(--teal); font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.claim-record-button.is-claimed { border-color: #bcdcd2; background: #eaf6f1; color: #176044; }
+.claim-record-button:disabled { cursor: wait; opacity: .55; }
 
 .empty-state { padding: 28px 22px; text-align: center; }
 .empty-state h2 { margin: 4px 0 8px; color: var(--teal); font-size: 20px; }
@@ -393,6 +424,8 @@ footer p { margin: 0 0 8px; }
   .deadline { margin-top: 8px; text-align: left; }
   .verification-hub { padding: 18px; border-radius: 18px; }
   .verification-form-row { grid-template-columns: 1fr; }
+  .claim-form-row { grid-template-columns: 1fr; }
+  .claim-account, .claimed-history { padding: 18px; border-radius: 18px; }
   .verification-platforms { grid-template-columns: 1fr; }
   .verification-platform-card { min-height: 0; }
   .verification-actions { display: grid; grid-template-columns: 1fr; }
@@ -405,6 +438,7 @@ footer p { margin: 0 0 8px; }
   .workflow-actions { grid-template-columns: 1fr; }
   .offer-action { align-items: stretch; flex-direction: column; }
   .claim-link { text-align: center; }
+  .offer-buttons { width: 100%; }
   .privacy-content section { padding: 17px; }
 }
 
