@@ -1,5 +1,108 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-01T07:36:20.393Z",
-  "offers": []
+  "generated_at": "2026-09-03T18:47:55.979Z",
+  "offers": [
+    {
+      "offer_id": "epic:8401414902e84f2cb9afa9142f051d32:20260827T1500",
+      "catalog_ids": {
+        "epic_catalog_item_id": "8401414902e84f2cb9afa9142f051d32"
+      },
+      "title": "《Breathedge》",
+      "platform": "epic",
+      "platform_label": "Epic Games Store",
+      "regions": [
+        "CN"
+      ],
+      "official_url": "https://store.epicgames.com/zh-CN/p/breathedge",
+      "source_url": "https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=zh-CN&country=CN&allowCountries=CN",
+      "offer_type": "keep",
+      "ownership": "permanent",
+      "membership_required": false,
+      "starts_at": "2026-08-27T15:00:00.000Z",
+      "ends_at": "2026-09-03T15:00:00.000Z",
+      "timezone": "Asia/Shanghai",
+      "original_price": {
+        "amount": 92,
+        "currency": "CNY",
+        "display": "CNY 92"
+      },
+      "current_price": {
+        "amount": 0,
+        "currency": "CNY",
+        "display": "免费"
+      },
+      "verified_at": "2026-09-02T11:23:13.137Z",
+      "status": "expired",
+      "reminder_level": "deadline_alert",
+      "image_url": null
+    },
+    {
+      "offer_id": "epic:8f1fcf01e32e4fd4b2ae0a9737992760:20260827T1500",
+      "catalog_ids": {
+        "epic_catalog_item_id": "8f1fcf01e32e4fd4b2ae0a9737992760"
+      },
+      "title": "Rival Stars Horse Racing : Desktop Edition",
+      "platform": "epic",
+      "platform_label": "Epic Games Store",
+      "regions": [
+        "CN"
+      ],
+      "official_url": "https://store.epicgames.com/zh-CN/p/rival-stars-horse-racing-dd09de",
+      "source_url": "https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=zh-CN&country=CN&allowCountries=CN",
+      "offer_type": "keep",
+      "ownership": "permanent",
+      "membership_required": false,
+      "starts_at": "2026-08-27T15:00:00.000Z",
+      "ends_at": "2026-09-03T15:00:00.000Z",
+      "timezone": "Asia/Shanghai",
+      "original_price": {
+        "amount": 78,
+        "currency": "CNY",
+        "display": "CNY 78"
+      },
+      "current_price": {
+        "amount": 0,
+        "currency": "CNY",
+        "display": "免费"
+      },
+      "verified_at": "2026-09-02T11:23:13.137Z",
+      "status": "expired",
+      "reminder_level": "deadline_alert",
+      "image_url": "https://cdn1.epicgames.com/spt-assets/3355791f5b4740618adac242cf0dd46c/rival-stars-horse-racing-scu1x.jpg"
+    },
+    {
+      "offer_id": "itch_io:4405770:20260328T0116",
+      "catalog_ids": {
+        "itch_game_id": "4405770"
+      },
+      "title": "Lord of Chaos",
+      "platform": "itch_io",
+      "platform_label": "itch.io",
+      "regions": [
+        "GLOBAL"
+      ],
+      "official_url": "https://hexnut-studios.itch.io/lord-of-chaos",
+      "source_url": "https://itch.io/s/182780/lord-of-chaos-on-sale-for-a-limited-time",
+      "offer_type": "keep",
+      "ownership": "permanent",
+      "membership_required": false,
+      "starts_at": "2026-03-28T01:16:00.000Z",
+      "ends_at": "2026-09-03T17:00:00.000Z",
+      "timezone": "UTC",
+      "original_price": {
+        "amount": 3.99,
+        "currency": "USD",
+        "display": "$3.99"
+      },
+      "current_price": {
+        "amount": 0,
+        "currency": "USD",
+        "display": "免费"
+      },
+      "verified_at": "2026-09-01T07:32:10.000Z",
+      "status": "expired",
+      "reminder_level": "deadline_alert",
+      "image_url": "https://img.itch.zone/aW1nLzI2MjU4NTA2LnBuZw==/original/2D%2BEC3.png"
+    }
+  ]
 }

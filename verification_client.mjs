@@ -6,6 +6,7 @@ import {
 } from "./verification.mjs";
 
 const APP_SESSION_KEY = "game_xiaoer_auth_session_v1";
+const PENDING_CROSS_BORDER_CONSENT_KEY = "game_xiaoer_cross_border_consent_pending_v1";
 const TEST_PLATFORM_BY_MODE = Object.freeze({ itch_test: "itch_io" });
 const BACKEND_MODES = new Set(["login_test", ...Object.keys(TEST_PLATFORM_BY_MODE), "live"]);
 
@@ -15,8 +16,10 @@ export function normalizeVerificationConfig(value) {
   const supabaseUrl = safeHttpsUrl(value?.supabase_url);
   const anonKey = typeof value?.supabase_anon_key === "string" ? value.supabase_anon_key.trim() : "";
   const functionName = /^[a-z0-9-]+$/.test(value?.function_name || "") ? value.function_name : "library-api";
+  const authEmailGateFunctionName = /^[a-z0-9-]+$/.test(value?.auth_email_gate_function_name || "") ? value.auth_email_gate_function_name : "auth-email-gate";
+  const crossBorder = normalizeCrossBorderConfig(value?.cross_border);
   if (BACKEND_MODES.has(mode) && (!supabaseUrl || !anonKey)) {
-    return { mode: "disabled", email_flow: emailFlow, reason: "领取状态后端尚未完成配置。", supabase_url: null, supabase_anon_key: "", function_name: functionName };
+    return { mode: "disabled", email_flow: emailFlow, reason: "领取状态后端尚未完成配置。", supabase_url: null, supabase_anon_key: "", function_name: functionName, auth_email_gate_function_name: authEmailGateFunctionName, cross_border: crossBorder };
   }
   return {
     mode,
@@ -25,6 +28,18 @@ export function normalizeVerificationConfig(value) {
     supabase_url: supabaseUrl,
     supabase_anon_key: anonKey,
     function_name: functionName,
+    auth_email_gate_function_name: authEmailGateFunctionName,
+    cross_border: crossBorder,
+  };
+}
+
+function normalizeCrossBorderConfig(value) {
+  return {
+    required: value?.required === true,
+    receiver_name: String(value?.receiver_name || "").slice(0, 120),
+    destination: String(value?.destination || "").slice(0, 80),
+    data_categories: Array.isArray(value?.data_categories) ? value.data_categories.map((item) => String(item).slice(0, 120)).slice(0, 12) : [],
+    consent_version: String(value?.consent_version || "").slice(0, 80),
   };
 }
 
@@ -179,6 +194,36 @@ class SupabaseVerificationClient {
 
   getSession() { return this.session; }
 
+  acceptCrossBorderConsent() {
+    if (this.mode !== "live") return null;
+    const config = this.config.cross_border || {};
+    if (!config.required || !config.consent_version || !config.receiver_name || !config.destination || config.data_categories.length < 3) {
+      throw new Error("境外处理同意配置不完整，暂时不能发送登录邮件");
+    }
+    const receipt = { consent_version: config.consent_version, accepted: true, consented_at: new Date().toISOString() };
+    try {
+      this.storage?.setItem(PENDING_CROSS_BORDER_CONSENT_KEY, JSON.stringify(receipt));
+      if (this.storage?.getItem(PENDING_CROSS_BORDER_CONSENT_KEY) !== JSON.stringify(receipt)) throw new Error("storage unavailable");
+    } catch {
+      throw new Error("当前浏览器无法安全保存同意状态，请关闭无痕模式或更换浏览器后重试");
+    }
+    return receipt;
+  }
+
+  async recordCrossBorderConsent() {
+    if (this.mode !== "live") return null;
+    let receipt;
+    try { receipt = JSON.parse(this.storage?.getItem(PENDING_CROSS_BORDER_CONSENT_KEY) || "null"); } catch {}
+    const consentedAt = new Date(receipt?.consented_at || "");
+    if (receipt?.accepted !== true || receipt?.consent_version !== this.config.cross_border?.consent_version
+      || !Number.isFinite(consentedAt.getTime()) || Math.abs(Date.now() - consentedAt.getTime()) > 15 * 60 * 1000) {
+      throw new Error("没有找到本次登录的有效境外处理同意，请重新发送验证码");
+    }
+    const result = await this.apiFetch("/consents/cross-border", { method: "POST", body: receipt });
+    try { this.storage?.removeItem(PENDING_CROSS_BORDER_CONSENT_KEY); } catch {}
+    return result;
+  }
+
   acceptAuthCallback(locationLike = globalThis.location) {
     const payload = readSupabaseAuthFragment(locationLike);
     if (!payload) return null;
@@ -189,6 +234,7 @@ class SupabaseVerificationClient {
 
   async requestCode(email) {
     if (!validEmail(email)) throw new Error("请输入有效邮箱地址");
+    if (this.mode === "live") await this.preauthorizeAuthEmail(email);
     await this.authFetch("/auth/v1/otp", {
       method: "POST",
       body: { email, create_user: this.mode === "live" },
@@ -205,6 +251,22 @@ class SupabaseVerificationClient {
     this.session = sessionFromPayload(payload, email);
     writeStoredSession(this.storage, this.session);
     return this.session;
+  }
+
+  async preauthorizeAuthEmail(email) {
+    let receipt;
+    try { receipt = JSON.parse(this.storage?.getItem(PENDING_CROSS_BORDER_CONSENT_KEY) || "null"); } catch {}
+    const consentedAt = new Date(receipt?.consented_at || "");
+    if (receipt?.accepted !== true || receipt?.consent_version !== this.config.cross_border?.consent_version
+      || !Number.isFinite(consentedAt.getTime()) || Math.abs(Date.now() - consentedAt.getTime()) > 15 * 60 * 1000) {
+      throw new Error("请先完成本次个人信息境外处理单独同意");
+    }
+    const base = `${this.config.supabase_url}/functions/v1/${this.config.auth_email_gate_function_name}`;
+    await requestJson(`${base}/preauthorize`, {
+      method: "POST",
+      body: { email, ...receipt },
+      headers: { apikey: this.config.supabase_anon_key },
+    });
   }
 
   async checkBackendSession() {
@@ -225,6 +287,7 @@ class SupabaseVerificationClient {
     }
     this.session = null;
     removeStoredSession(this.storage);
+    try { this.storage?.removeItem(PENDING_CROSS_BORDER_CONSENT_KEY); } catch {}
   }
 
   async listLinks() {
@@ -274,6 +337,12 @@ class SupabaseVerificationClient {
   async unlink(platform) {
     this.requirePlatform(platform);
     await this.apiFetch(`/links/${encodeURIComponent(platform)}`, { method: "DELETE" });
+  }
+
+  async withdrawCrossBorderConsent() {
+    this.requireLive();
+    await this.apiFetch("/consents/cross-border", { method: "DELETE" });
+    await this.logout();
   }
 
   async deleteAccount() {

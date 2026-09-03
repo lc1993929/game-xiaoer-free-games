@@ -55,6 +55,10 @@
           <input id="verification-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required>
           <button id="verification-send-code" class="secondary-button" type="button">发送登录链接</button>
         </div>
+        <label id="verification-cross-border-consent" class="verification-consent" hidden>
+          <input id="verification-cross-border-consent-input" type="checkbox">
+          <span>我已阅读<a href="./privacy.html" target="_blank" rel="noopener noreferrer">隐私说明</a>，并单独同意将邮箱登录账号、平台用户标识与授权范围、限免匹配结果提供给 Supabase, Inc.，在韩国首尔处理。</span>
+        </label>
         <div id="verification-code-row" class="verification-form-row" hidden>
           <input id="verification-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="邮件验证码">
           <button id="verification-sign-in" class="primary-inline-button" type="submit">登录</button>
@@ -86,6 +90,7 @@
       <div id="verification-actions" class="verification-actions" hidden>
         <button id="verification-run" class="primary-button" type="button">立即核验限免清单</button>
         <button id="verification-clear" class="text-button" type="button">清除核验结果</button>
+        <button id="verification-withdraw-consent" class="text-button danger" type="button">撤回境外处理同意</button>
         <button id="verification-delete-account" class="text-button danger" type="button">删除领取状态账号</button>
       </div>
 

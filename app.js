@@ -67,6 +67,8 @@ const state = {
   verificationBusy: false,
   verificationDeleteArmed: false,
   verificationDeleteTimer: null,
+  verificationWithdrawArmed: false,
+  verificationWithdrawTimer: null,
 };
 
 function formatDate(value, timezone) {
@@ -257,6 +259,7 @@ function renderVerificationHub() {
       : client.config?.reason
       || "账号后端完成配置前，继续使用下方批量确认助手。";
   document.querySelector("#verification-login").hidden = disabled || loginTest || itchTest || Boolean(session);
+  document.querySelector("#verification-cross-border-consent").hidden = client.mode !== "live";
   const emailFlow = client.config?.email_flow || "magic_link";
   document.querySelector("#verification-send-code").textContent = emailFlow === "otp" ? "发送验证码" : "发送登录链接";
   if (emailFlow === "magic_link") document.querySelector("#verification-code-row").hidden = true;
@@ -264,6 +267,7 @@ function renderVerificationHub() {
   document.querySelector("#verification-session-test").hidden = !(loginTest && session);
   document.querySelector("#verification-actions").hidden = !session || loginTest;
   document.querySelector("#verification-clear").hidden = itchTest;
+  document.querySelector("#verification-withdraw-consent").hidden = itchTest || client.mode !== "live";
   document.querySelector("#verification-delete-account").hidden = itchTest;
   document.querySelector("#verification-account-state").textContent = session
     ? "已登录"
@@ -357,6 +361,8 @@ function bindVerification() {
   document.querySelector("#verification-send-code").addEventListener("click", async () => {
     const email = document.querySelector("#verification-email").value.trim();
     await withVerificationBusy(async () => {
+      requireCrossBorderConsent();
+      state.verificationClient.acceptCrossBorderConsent?.();
       const response = await state.verificationClient.requestCode(email);
       const expectsCode = Boolean(response.demo_code) || response.delivery === "otp";
       document.querySelector("#verification-code-row").hidden = !expectsCode;
@@ -374,7 +380,9 @@ function bindVerification() {
     const email = document.querySelector("#verification-email").value.trim();
     const code = document.querySelector("#verification-code").value.trim();
     await withVerificationBusy(async () => {
+      requireCrossBorderConsent();
       await state.verificationClient.verifyCode(email, code);
+      await state.verificationClient.recordCrossBorderConsent?.();
       setVerificationMessage("登录成功，可以关联游戏平台。", "success");
       await refreshVerificationAccount();
     });
@@ -436,6 +444,28 @@ function bindVerification() {
     });
   });
 
+  document.querySelector("#verification-withdraw-consent").addEventListener("click", async (event) => {
+    const button = event.currentTarget;
+    if (!state.verificationWithdrawArmed) {
+      state.verificationWithdrawArmed = true;
+      button.textContent = "再次点击确认撤回";
+      clearTimeout(state.verificationWithdrawTimer);
+      state.verificationWithdrawTimer = setTimeout(() => {
+        state.verificationWithdrawArmed = false;
+        button.textContent = "撤回境外处理同意";
+      }, 5000);
+      return;
+    }
+    clearTimeout(state.verificationWithdrawTimer);
+    state.verificationWithdrawArmed = false;
+    await withVerificationBusy(async () => {
+      await state.verificationClient.withdrawCrossBorderConsent();
+      button.textContent = "撤回境外处理同意";
+      setVerificationMessage("境外处理同意已撤回，你已退出登录。无需账号的功能仍可继续使用。", "success");
+      await refreshVerificationAccount();
+    });
+  });
+
   document.querySelector("#verification-delete-account").addEventListener("click", async (event) => {
     const button = event.currentTarget;
     if (!state.verificationDeleteArmed) {
@@ -457,6 +487,16 @@ function bindVerification() {
       await refreshVerificationAccount();
     });
   });
+}
+
+function requireCrossBorderConsent() {
+  const client = state.verificationClient;
+  const required = client.mode === "live" && client.config?.cross_border?.required === true;
+  const checkbox = document.querySelector("#verification-cross-border-consent-input");
+  if (required && !checkbox.checked) {
+    checkbox.focus();
+    throw new Error("请先阅读隐私说明，并单独同意个人信息在韩国首尔处理");
+  }
 }
 
 async function runVerificationAndRefresh(focusOfferId = null) {
@@ -486,6 +526,7 @@ async function withVerificationBusy(action) {
 
 async function initializeVerification() {
   let authCompleted = false;
+  let authConsentReady = true;
   try {
     authCompleted = Boolean(state.verificationClient.acceptAuthCallback?.());
     if (authCompleted) history.replaceState(null, "", `${location.pathname}${location.search}`);
@@ -494,7 +535,15 @@ async function initializeVerification() {
   }
   state.verificationSession = state.verificationClient.getSession();
   renderVerificationHub();
-  if (authCompleted) setVerificationMessage(
+  if (authCompleted && state.verificationClient.mode === "live") {
+    try {
+      await state.verificationClient.recordCrossBorderConsent();
+    } catch (error) {
+      authConsentReady = false;
+      setVerificationMessage(error.message || "单独同意没有完成，请重新登录。", "error");
+    }
+  }
+  if (authCompleted && authConsentReady) setVerificationMessage(
     state.verificationClient.mode === "login_test"
       ? "登录回跳测试成功。游戏平台关联和游戏库核验仍未开放。"
       : state.verificationClient.mode === "itch_test"
@@ -510,7 +559,7 @@ async function initializeVerification() {
       setVerificationMessage("itch.io 账号已关联。", "success");
     });
   }
-  if (state.verificationSession) await withVerificationBusy(refreshVerificationAccount);
+  if (state.verificationSession && authConsentReady) await withVerificationBusy(refreshVerificationAccount);
   const params = new URLSearchParams(location.search);
   if (params.get("verification") === "linked") {
     setVerificationMessage("平台账号已关联，请登录后查看核验状态。", "success");
