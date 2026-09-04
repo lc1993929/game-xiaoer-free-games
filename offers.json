@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-04T02:21:53.174Z",
+  "generated_at": "2026-09-04T03:47:30.349Z",
   "offers": [
     {
       "offer_id": "epic:b8cc76ce7d6645f0a282b843a072cc78:20260903T1500",
@@ -31,10 +31,138 @@
         "currency": "CNY",
         "display": "免费"
       },
-      "verified_at": "2026-09-03T21:03:34.180Z",
+      "verified_at": "2026-09-04T03:41:46.592Z",
       "status": "verified",
       "reminder_level": "deadline_alert",
       "image_url": "https://cdn1.epicgames.com/spt-assets/04b7a1d78c904065b5c24f9e7816c99a/alone-with-you-cllc3.png"
+    },
+    {
+      "offer_id": "ps_plus_hk:chained-echoes-monthly-2026-09:20260831T1600",
+      "catalog_ids": {},
+      "title": "Chained Echoes",
+      "platform": "ps_plus_hk",
+      "platform_label": "PlayStation Plus 港区",
+      "regions": [
+        "HK"
+      ],
+      "official_url": "https://store.playstation.com/en-hk/concept/10003362",
+      "source_url": "https://blog.zh-hant.playstation.com/2026/08/28/20260828-psplushk/",
+      "offer_type": "subscription",
+      "ownership": "while_subscribed",
+      "membership_required": true,
+      "starts_at": "2026-08-31T16:00:00.000Z",
+      "ends_at": "2026-10-05T15:59:59.000Z",
+      "timezone": "Asia/Hong_Kong",
+      "original_price": {
+        "amount": 198,
+        "currency": "HKD",
+        "display": "HK$198"
+      },
+      "current_price": {
+        "amount": 0,
+        "currency": "HKD",
+        "display": "PS Plus 会员可领"
+      },
+      "verified_at": "2026-09-04T02:00:00.000Z",
+      "status": "verified",
+      "reminder_level": "deadline_alert",
+      "image_url": null
+    },
+    {
+      "offer_id": "ps_plus_hk:mlb-the-show-26-monthly-2026-09:20260831T1600",
+      "catalog_ids": {},
+      "title": "MLB The Show 26",
+      "platform": "ps_plus_hk",
+      "platform_label": "PlayStation Plus 港区",
+      "regions": [
+        "HK"
+      ],
+      "official_url": "https://www.playstation.com/zh-hant-hk/ps-plus/whats-new/",
+      "source_url": "https://blog.zh-hant.playstation.com/2026/08/28/20260828-psplushk/",
+      "offer_type": "subscription",
+      "ownership": "while_subscribed",
+      "membership_required": true,
+      "starts_at": "2026-08-31T16:00:00.000Z",
+      "ends_at": "2026-10-05T15:59:59.000Z",
+      "timezone": "Asia/Hong_Kong",
+      "original_price": {
+        "amount": null,
+        "currency": "HKD",
+        "display": "会员游戏"
+      },
+      "current_price": {
+        "amount": 0,
+        "currency": "HKD",
+        "display": "PS Plus 会员可领"
+      },
+      "verified_at": "2026-09-04T02:00:00.000Z",
+      "status": "verified",
+      "reminder_level": "deadline_alert",
+      "image_url": null
+    },
+    {
+      "offer_id": "ps_plus_hk:sniper-elite-resistance-monthly-2026-09:20260831T1600",
+      "catalog_ids": {},
+      "title": "Sniper Elite: Resistance",
+      "platform": "ps_plus_hk",
+      "platform_label": "PlayStation Plus 港区",
+      "regions": [
+        "HK"
+      ],
+      "official_url": "https://store.playstation.com/en-hk/concept/10008716",
+      "source_url": "https://blog.zh-hant.playstation.com/2026/08/28/20260828-psplushk/",
+      "offer_type": "subscription",
+      "ownership": "while_subscribed",
+      "membership_required": true,
+      "starts_at": "2026-08-31T16:00:00.000Z",
+      "ends_at": "2026-10-05T15:59:59.000Z",
+      "timezone": "Asia/Hong_Kong",
+      "original_price": {
+        "amount": 468,
+        "currency": "HKD",
+        "display": "HK$468"
+      },
+      "current_price": {
+        "amount": 0,
+        "currency": "HKD",
+        "display": "PS Plus 会员可领"
+      },
+      "verified_at": "2026-09-04T02:00:00.000Z",
+      "status": "verified",
+      "reminder_level": "deadline_alert",
+      "image_url": null
+    },
+    {
+      "offer_id": "ps_plus_hk:wobbly-life-monthly-2026-09:20260831T1600",
+      "catalog_ids": {},
+      "title": "Wobbly Life",
+      "platform": "ps_plus_hk",
+      "platform_label": "PlayStation Plus 港区",
+      "regions": [
+        "HK"
+      ],
+      "official_url": "https://store.playstation.com/en-hk/concept/10004896",
+      "source_url": "https://blog.zh-hant.playstation.com/2026/08/28/20260828-psplushk/",
+      "offer_type": "subscription",
+      "ownership": "while_subscribed",
+      "membership_required": true,
+      "starts_at": "2026-08-31T16:00:00.000Z",
+      "ends_at": "2026-10-05T15:59:59.000Z",
+      "timezone": "Asia/Hong_Kong",
+      "original_price": {
+        "amount": 178,
+        "currency": "HKD",
+        "display": "HK$178"
+      },
+      "current_price": {
+        "amount": 0,
+        "currency": "HKD",
+        "display": "PS Plus 会员可领"
+      },
+      "verified_at": "2026-09-04T02:00:00.000Z",
+      "status": "verified",
+      "reminder_level": "deadline_alert",
+      "image_url": null
     }
   ]
 }
