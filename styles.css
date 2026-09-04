@@ -378,27 +378,23 @@ footer {
   color: #32200c;
   text-decoration: none;
 }
-.claim-state {
+.claim-record-button {
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  min-height: 44px;
-  padding: 0 4px;
-}
-.claim-record-button {
-  display: inline-flex;
-  align-items: center;
+  justify-content: center;
   gap: 8px;
   min-height: 44px;
   border: 0;
-  padding: 0 6px;
-  background: transparent;
-  color: var(--muted);
+  border-radius: 11px;
+  padding: 0 14px;
+  background: #f1f5f3;
+  color: #63716d;
   font: inherit;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 800;
   cursor: pointer;
-  transition: color 180ms ease, opacity 180ms ease;
+  transition: background-color 180ms ease, color 180ms ease, opacity 180ms ease;
 }
 .claim-state-icon {
   position: relative;
@@ -411,8 +407,8 @@ footer {
   transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
 }
 .claim-record-button.is-claimed {
+  background: #e4f2ee;
   color: var(--green);
-  cursor: default;
 }
 .claim-record-button.is-claimed .claim-state-icon {
   border-color: var(--green);
@@ -430,25 +426,11 @@ footer {
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
-.claim-record-button:disabled,
-.claim-undo-button:disabled {
+.claim-record-button:disabled {
   opacity: 0.5;
 }
-.claim-undo-button {
-  min-height: 44px;
-  border: 0;
-  padding: 0 8px;
-  background: transparent;
-  color: var(--muted);
-  font: inherit;
-  font-size: 11px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-  transition: color 180ms ease, opacity 180ms ease;
-}
-.claim-undo-button:hover {
-  color: #8f433d;
+.claim-record-button:not(:disabled):hover {
+  background: #e8efec;
 }
 .empty-state {
   margin-top: 12px;
